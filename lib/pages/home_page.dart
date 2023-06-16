@@ -8,8 +8,6 @@ class ScreenHome extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          width: double.infinity,
-          height: double.infinity,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -26,7 +24,7 @@ class ScreenHome extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(15),
-            child: Column(
+            child: ListView(
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -42,8 +40,8 @@ class ScreenHome extends StatelessWidget {
                       padding: const EdgeInsets.only(right: 25),
                       child: CircleAvatar(
                         backgroundColor: Colors.blue.withOpacity(0),
-                        backgroundImage:
-                            const AssetImage('assets/images/59 (1).png'),
+                        backgroundImage: const AssetImage(
+                            'assets/images/profile_avatar.png'),
                         radius: 25,
                       ),
                     ),
@@ -71,10 +69,17 @@ class ScreenHome extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(top: 10),
+                  margin: const EdgeInsets.only(top: 10, right: 4, left: 4),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(19),
                     color: const Color(0xff5451D6),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 4,
+                        spreadRadius: 1, //New
+                      )
+                    ],
                   ),
                   width: double.infinity,
                   child: Padding(
@@ -117,6 +122,198 @@ class ScreenHome extends StatelessWidget {
                                 style: TextStyle(color: Colors.white),
                               )
                             ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 30),
+                  width: double.infinity,
+                  child: const Text(
+                    'Services and Complains',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Color(0xff1C305E),
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(17),
+                                color: const Color(0xff5451D6),
+                              ),
+                              child: Column(
+                                children: [
+                                  Image.asset(
+                                    'assets/images/maintenance-home-logo.png',
+                                    width: 170,
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.only(bottom: 8.0),
+                                    child: Text(
+                                      'Maintenance',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              width: double.infinity,
+                              margin: const EdgeInsets.only(
+                                top: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(17),
+                                color: const Color(0xff5451D6),
+                              ),
+                              child: Column(
+                                children: [
+                                  Image.asset(
+                                    'assets/images/attendence-home-logo.png',
+                                    width: 100,
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.only(bottom: 8.0),
+                                    child: Text(
+                                      'Attendence',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 140,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(17),
+                                color: const Color(0xff5451D6),
+                              ),
+                              child: Column(
+                                children: [
+                                  Image.asset(
+                                    'assets/images/cleaning-home-logo.png',
+                                    width: 110,
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.only(bottom: 8.0),
+                                    child: Text(
+                                      'Cleaning',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              height: 154,
+                              width: double.infinity,
+                              margin: const EdgeInsets.only(
+                                top: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(17),
+                                color: const Color(0xff5451D6),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Image.asset(
+                                      'assets/images/food-home-logo.png',
+                                      width: 150,
+                                    ),
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.only(bottom: 8.0),
+                                    child: Text(
+                                      'Food',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 10, left: 4, right: 4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(19),
+                    color: const Color(0xff5451D6),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 4,
+                        spreadRadius: 1, //New
+                      )
+                    ],
+                  ),
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset(
+                            'assets/images/discipline-home-logo.png',
+                            width: 130,
+                          ),
+                        ),
+                        const Text(
+                          'Discipline',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
                           ),
                         ),
                       ],
