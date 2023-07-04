@@ -46,7 +46,7 @@ class _MainPageState extends State<MainPage> {
           child: GNav(
             tabBackgroundColor: const Color.fromARGB(31, 84, 81, 214),
             activeColor: const Color.fromARGB(255, 84, 81, 214),
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.all(12),
             gap: 6,
             tabs: const [
               GButton(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vit_hostel_repo/widgets/history_list.dart';
 
 class History extends StatefulWidget {
   const History({super.key});
@@ -9,13 +10,21 @@ class History extends StatefulWidget {
 
 class _HistoryState extends State<History> {
   late double lastSwipe;
+  int _currrentPage = 0;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onHorizontalDragUpdate: (details) {
-        print("detected");
-        print(details.delta);
+        if (details.delta.dx < 0 && _currrentPage == 0) {
+          setState(() {
+            _currrentPage = 1;
+          });
+        } else if (details.delta.dx > 0 && _currrentPage == 1) {
+          setState(() {
+            _currrentPage = 0;
+          });
+        }
       },
       child: Container(
         decoration: BoxDecoration(
@@ -59,28 +68,80 @@ class _HistoryState extends State<History> {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 25,
               ),
-              DefaultTabController(
-                length: 2,
-                child: TabBar(
-                    indicator: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(5), // Creates border
-                        color: Color.fromARGB(255, 84, 81, 214)),
-                    tabs: [
-                      Tab(
-                        text: 'sas',
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      if (_currrentPage != 0) {
+                        setState(() {
+                          _currrentPage = 0;
+                        });
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(9),
+                        border: Border.all(color: Colors.white),
+                        color: _currrentPage == 0
+                            ? const Color.fromARGB(255, 84, 81, 214)
+                            : const Color.fromARGB(255, 255, 255, 255),
                       ),
-                      Tab(text: 'SXAS')
-                    ]),
+                      child: Text(
+                        'Pending',
+                        style: TextStyle(
+                          color:
+                              _currrentPage == 0 ? Colors.white : Colors.black,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      if (_currrentPage != 1) {
+                        setState(() {
+                          _currrentPage = 1;
+                        });
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(9),
+                        border: Border.all(color: Colors.white),
+                        color: _currrentPage == 1
+                            ? const Color.fromARGB(255, 84, 81, 214)
+                            : const Color.fromARGB(255, 255, 255, 255),
+                      ),
+                      child: Text(
+                        'Resolved',
+                        style: TextStyle(
+                          color:
+                              _currrentPage == 1 ? Colors.white : Colors.black,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 45,
+              ),
+              HistoryList(
+                dataType: _currrentPage == 0 ? "pending" : "completed",
               )
             ],
           ),
         ),
       ),
     );
-    ;
   }
 }
