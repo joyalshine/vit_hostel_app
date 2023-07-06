@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ScreenHome extends StatelessWidget {
-  const ScreenHome({super.key});
+  const ScreenHome({super.key, required this.changeScreen});
+
+  final void Function(int index) changeScreen;
 
   @override
   Widget build(BuildContext context) {
@@ -69,65 +71,69 @@ class ScreenHome extends StatelessWidget {
                 ),
               ),
             ),
-            InkWell(
-              onTap: () {},
-              child: Container(
-                margin: const EdgeInsets.only(top: 10, right: 4, left: 4),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(19),
-                  color: const Color(0xff5451D6),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 4,
-                      spreadRadius: 1, //New
-                    )
-                  ],
-                ),
-                width: double.infinity,
-                child: Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Breakfast',
-                        style: TextStyle(
-                            color: Color(0xffFFFFFF),
-                            fontSize: 17,
-                            fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      const Text(
-                          'Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg',
-                          style: TextStyle(
-                            color: Color(0xffFFFFFF),
-                          )),
-                      const SizedBox(
-                        height: 4,
-                      ),
-                      Container(
-                        width: double.infinity,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: const [
-                            Icon(
-                              Icons.timelapse_outlined,
-                              color: Colors.white,
-                            ),
-                            SizedBox(
-                              width: 6,
-                            ),
-                            Text(
-                              '7:00 AM to 9:00 AM',
-                              style: TextStyle(color: Colors.white),
-                            )
-                          ],
-                        ),
-                      ),
+            Material(
+              child: InkWell(
+                onTap: () {
+                  changeScreen(4);
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 10, right: 4, left: 4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(19),
+                    color: const Color(0xff5451D6),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 4,
+                        spreadRadius: 1, //New
+                      )
                     ],
+                  ),
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Breakfast',
+                          style: TextStyle(
+                              color: Color(0xffFFFFFF),
+                              fontSize: 17,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        const Text(
+                            'Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg',
+                            style: TextStyle(
+                              color: Color(0xffFFFFFF),
+                            )),
+                        const SizedBox(
+                          height: 4,
+                        ),
+                        Container(
+                          width: double.infinity,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: const [
+                              Icon(
+                                Icons.timelapse_outlined,
+                                color: Colors.white,
+                              ),
+                              SizedBox(
+                                width: 6,
+                              ),
+                              Text(
+                                '7:00 AM to 9:00 AM',
+                                style: TextStyle(color: Colors.white),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

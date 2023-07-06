@@ -17,8 +17,8 @@ class HistoryList extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  margin: const EdgeInsets.all(12),
-                  padding: const EdgeInsets.all(10),
+                  margin: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.white,
@@ -28,28 +28,39 @@ class HistoryList extends StatelessWidget {
                     width: 60,
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
-                      'AC not cooling',
-                      style: TextStyle(
-                        fontSize: 19,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      '09/02/2023',
-                      style: TextStyle(
-                          fontSize: 15,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Maintainance',
+                        style: TextStyle(
+                          fontSize: 18,
                           color: Colors.white,
-                          fontWeight: FontWeight.w500),
-                    ),
-                  ],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 6,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: const [
+                          Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: Text(
+                              '09/02/2023',
+                              textAlign: TextAlign.end,
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 )
               ],
             ),

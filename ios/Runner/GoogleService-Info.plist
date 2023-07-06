@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>628776946173-c01leqn45avban2oam54ua94e2o7l5g0.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.628776946173-c01leqn45avban2oam54ua94e2o7l5g0</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDA76XFjBe3W-06YMMb-5c-2uOLkP7VpbQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>628776946173</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.vitHostelRepo</string>
+	<key>PROJECT_ID</key>
+	<string>vit-hostel-app</string>
+	<key>STORAGE_BUCKET</key>
+	<string>vit-hostel-app.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:628776946173:ios:f3bb41120dae76ae0ab194</string>
+</dict>
+</plist>
