@@ -8,35 +8,50 @@ class StartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
+    double _deviceWidth = queryData.size.width;
+    double _deviceHeight = queryData.size.height;
+
     return Column(
+      //mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(
-              left: 8.0, right: 8.0, bottom: 8.0, top: 40.0),
-          child: SizedBox(
-            width: double.infinity,
-            child: Center(
-              child: Text(
-                "Effortless Complaints, Maintenance, and Menus for a Better Stay!",
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
+        Expanded(
+          flex: 2,
+          child: Padding(
+            padding: EdgeInsets.only(
+                left: _deviceWidth * 0.07,
+                right: _deviceWidth * 0.07,
+                bottom: _deviceHeight * 0.00,
+                top: _deviceHeight * 0.07),
+            child: SizedBox(
+              width: double.infinity,
+              child: Center(
+                child: Text(
+                  "Effortless Complaints, Maintenance, and Menus for a Better Stay!",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
-          child: Image.asset(
-            'assets/images/login-icon.png',
-            height: 250,
+        Expanded(
+          flex: 3,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Image.asset(
+              'assets/images/login-icon.png',
+              height: 250,
+            ),
           ),
         ),
         Expanded(
-          flex: 3,
+          flex: 4,
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 25.0, horizontal: 35),
