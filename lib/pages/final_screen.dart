@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class FinalScreen extends StatelessWidget {
+class FinalScreen extends StatefulWidget {
   const FinalScreen({super.key});
 
-  final String? selectedValue = null;
+  @override
+  State<FinalScreen> createState() => _FinalScreenState();
+}
+
+class _FinalScreenState extends State<FinalScreen> {
+  String dropdownValue = "Speical Mess";
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +35,7 @@ class FinalScreen extends StatelessWidget {
                     "Effortless Complaints, Maintenance, and Menus for a Better Stay!",
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
-                      fontSize: 30,
+                      fontSize: 25,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
@@ -55,19 +60,19 @@ class FinalScreen extends StatelessWidget {
                   Text(
                     "Just one more to go",
                     style: GoogleFonts.poppins(
-                      fontSize: 30,
+                      fontSize: 25,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
                   Text(
                     "Enter the Room number ",
                     style: GoogleFonts.poppins(
-                      fontSize: 19,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w400,
                       color: Colors.white,
                     ),
                     textAlign: TextAlign.center,
@@ -80,9 +85,10 @@ class FinalScreen extends StatelessWidget {
                     child: TextField(
                       autocorrect: true,
                       decoration: InputDecoration(
-                        hintText: 'Enter Your Email Here...',
+                        hintText: 'Enter Your Room number Here...',
                         hintStyle: const TextStyle(
-                            color: Color.fromARGB(255, 51, 47, 47)),
+                          color: Color.fromARGB(255, 51, 47, 47),
+                        ),
                         filled: true,
                         fillColor: Colors.grey.shade200.withOpacity(0.2),
                         enabledBorder: OutlineInputBorder(
@@ -117,11 +123,66 @@ class FinalScreen extends StatelessWidget {
                   const SizedBox(
                     height: 40,
                   ),
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                        color: Colors.grey.shade200.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                            color: Colors.grey.shade200.withOpacity(0.2),
+                            width: 2)),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: 12.0,
+                      ),
+                      child: DropdownButton(
+                        borderRadius: BorderRadius.circular(12),
+                        value: dropdownValue,
+                        items: const [
+                          //add items in the dropdown
+                          DropdownMenuItem(
+                            value: "Speical Mess",
+                            child: Text("Speical Mess"),
+                          ),
+                          DropdownMenuItem(
+                            value: "Veg Mess",
+                            child: Text("Veg Mess"),
+                          ),
+                          DropdownMenuItem(
+                            value: "Non-Veg Mess",
+                            child: Text("Non-Veg Mess"),
+                          )
+                        ],
+                        onChanged: (String? value) {
+                          setState(() {
+                            dropdownValue = value!;
+                          });
+                        },
+                        icon: const Padding(
+                          padding: EdgeInsets.only(
+                            right: 10,
+                            top: 18,
+                            bottom: 18,
+                          ),
+                          child: Icon(Icons.arrow_drop_down),
+                        ),
+                        iconEnabledColor: Colors.white, //Icon color
+                        style: GoogleFonts.poppins(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w400,
+                          color: const Color.fromARGB(255, 51, 47, 47),
+                        ),
+
+                        dropdownColor: Colors.grey.shade200,
+                        underline: Container(),
+                        isExpanded: true,
+                      ),
+                    ),
+                  ),
                   const SizedBox(
                     height: 40,
                   ),
                   SizedBox(
-                    child: OutlinedButton(
+                    child: TextButton(
                       onPressed: () {},
                       child: Ink(
                         decoration: const BoxDecoration(

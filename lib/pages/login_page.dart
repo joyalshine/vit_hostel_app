@@ -60,6 +60,7 @@ class _LoginPageState extends State<LoginPage> {
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
       home: Scaffold(
+          resizeToAvoidBottomInset: false,
           body: Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class BlockSreen extends StatelessWidget {
-  BlockSreen({super.key, required this.nextScreen});
+class BlockSreen extends StatefulWidget {
+  const BlockSreen({super.key, required this.nextScreen});
 
   final void Function() nextScreen;
 
+  @override
+  State<BlockSreen> createState() => _BlockSreenState();
+}
+
+class _BlockSreenState extends State<BlockSreen> {
   final List<String> blocks = [
     "A",
     "B",
@@ -25,6 +30,9 @@ class BlockSreen extends StatelessWidget {
     "Q",
     "R"
   ];
+
+  bool onChanged = false;
+  var selectedIndex = -1;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +59,7 @@ class BlockSreen extends StatelessWidget {
                     child: Text(
                       "Select your Block and Room",
                       style: GoogleFonts.poppins(
-                        fontSize: 40,
+                        fontSize: 30,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),
@@ -61,14 +69,14 @@ class BlockSreen extends StatelessWidget {
                   Text(
                     "Do not put wrong room and floor",
                     style: GoogleFonts.poppins(
-                      fontSize: 19,
+                      fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: const Color.fromARGB(141, 255, 255, 255),
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(
-                    height: 50,
+                    height: 30,
                   ),
                   Text(
                     "Block",
@@ -87,20 +95,36 @@ class BlockSreen extends StatelessWidget {
                       children: List.generate(
                           16,
                           (index) => TextButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  setState(() {
+                                    selectedIndex = index;
+                                    // onChanged = true;
+                                  });
+                                },
                                 child: Ink(
-                                  decoration: const BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Color.fromARGB(142, 185, 185, 185),
-                                        Color.fromARGB(149, 209, 209, 209)
-                                      ],
-                                      stops: [0, 1],
-                                      begin: Alignment.centerLeft,
-                                      end: Alignment.centerRight,
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(12.0)),
+                                  decoration: BoxDecoration(
+                                    gradient: (selectedIndex != index)
+                                        ? const LinearGradient(
+                                            colors: [
+                                              Color.fromARGB(
+                                                  142, 185, 185, 185),
+                                              Color.fromARGB(149, 209, 209, 209)
+                                            ],
+                                            stops: [0, 1],
+                                            begin: Alignment.centerLeft,
+                                            end: Alignment.centerRight,
+                                          )
+                                        : const LinearGradient(
+                                            colors: [
+                                              Color(0xff784cc6),
+                                              Color(0xff8f6ad0)
+                                            ],
+                                            stops: [0, 1],
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                          ),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(12.0)),
                                   ),
                                   child: Container(
                                     constraints: const BoxConstraints(
@@ -124,8 +148,8 @@ class BlockSreen extends StatelessWidget {
                     height: 40,
                   ),
                   SizedBox(
-                    child: OutlinedButton(
-                      onPressed: nextScreen,
+                    child: TextButton(
+                      onPressed: widget.nextScreen,
                       child: Ink(
                         decoration: const BoxDecoration(
                           gradient: LinearGradient(
