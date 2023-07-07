@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "628776946173",
+    "project_id": "vit-hostel-app",
+    "storage_bucket": "vit-hostel-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:628776946173:android:cb5171559f55d2e20ab194",
+        "android_client_info": {
+          "package_name": "com.example.vit_hostel_repo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "628776946173-17dpncb709vhiqp12ob3nidannqmp3f5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4jyZ51AdLeVJAaj_0NY-pPH3Vi7ayYbQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "628776946173-17dpncb709vhiqp12ob3nidannqmp3f5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
