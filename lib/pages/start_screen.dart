@@ -8,16 +8,16 @@ class StartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
     MediaQueryData queryData;
     queryData = MediaQuery.of(context);
     double _deviceWidth = queryData.size.width;
     double _deviceHeight = queryData.size.height;
 
     return Column(
-      //mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Expanded(
-          flex: 2,
+        SizedBox(
+          height: _deviceHeight * 0.20,
           child: Padding(
             padding: EdgeInsets.only(
                 left: _deviceWidth * 0.07,
@@ -40,19 +40,17 @@ class StartScreen extends StatelessWidget {
             ),
           ),
         ),
-        Expanded(
-          flex: 3,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Image.asset(
-              'assets/images/login-icon.png',
-              height: 250,
-            ),
+        Container(
+          height: _deviceHeight * 0.35,
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Image.asset(
+            'assets/images/login-icon.png',
           ),
         ),
         Expanded(
           flex: 4,
           child: Container(
+            height: _deviceHeight * 0.45,
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 25.0, horizontal: 35),
             decoration: BoxDecoration(
@@ -79,7 +77,7 @@ class StartScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(
-                height: 30,
+                height: 15,
               ),
               Text(
                 "Email",
@@ -92,38 +90,42 @@ class StartScreen extends StatelessWidget {
               const SizedBox(
                 height: 15,
               ),
-              SizedBox(
-                width: double.infinity,
-                child: TextField(
-                  autocorrect: true,
-                  decoration: InputDecoration(
-                    hintText: 'Enter Your Email Here...',
-                    prefixIcon: const Icon(
-                      Icons.account_circle_sharp,
-                      color: Colors.grey,
-                    ),
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    filled: true,
-                    fillColor: Colors.grey.shade200.withOpacity(0.2),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(12.0)),
-                      borderSide: BorderSide(
-                          color: Colors.white.withOpacity(0.2), width: 2),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(
-                        color: Colors.white.withOpacity(0.2),
-                        width: 2,
+
+              Form(
+                key: formKey,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: TextFormField(
+                    autocorrect: true,
+                    decoration: InputDecoration(
+                      hintText: 'Enter Your Email Here...',
+                      prefixIcon: const Icon(
+                        Icons.account_circle_sharp,
+                        color: Colors.grey,
+                      ),
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      filled: true,
+                      fillColor: Colors.grey.shade200.withOpacity(0.2),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(12.0)),
+                        borderSide: BorderSide(
+                            color: Colors.white.withOpacity(0.2), width: 2),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(
+                          color: Colors.white.withOpacity(0.2),
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
               const SizedBox(
-                height: 40,
+                height: 20,
               ),
               SizedBox(
                 width: double.infinity,

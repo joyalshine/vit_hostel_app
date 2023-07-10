@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class FinalScreen extends StatefulWidget {
-  const FinalScreen({super.key});
+  const FinalScreen({super.key, required this.nextScreen});
+
+  final void Function() nextScreen;
 
   @override
   State<FinalScreen> createState() => _FinalScreenState();
@@ -183,7 +185,7 @@ class _FinalScreenState extends State<FinalScreen> {
                   ),
                   SizedBox(
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: widget.nextScreen,
                       child: Ink(
                         decoration: const BoxDecoration(
                           gradient: LinearGradient(
