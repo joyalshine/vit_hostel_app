@@ -100,12 +100,12 @@ class StartScreen extends StatelessWidget {
                     decoration: InputDecoration(
                       hintText: 'Enter Your Email Here...',
                       prefixIcon: const Icon(
-                        Icons.account_circle_sharp,
+                        Icons.account_circle_outlined,
                         color: Colors.grey,
                       ),
                       hintStyle: const TextStyle(color: Colors.grey),
                       filled: true,
-                      fillColor: Colors.grey.shade200.withOpacity(0.2),
+                      fillColor: Colors.grey.shade200.withOpacity(0.1),
                       enabledBorder: OutlineInputBorder(
                         borderRadius:
                             const BorderRadius.all(Radius.circular(12.0)),
