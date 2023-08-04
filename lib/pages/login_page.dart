@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vit_hostel_repo/pages/block_screen.dart';
-import 'package:vit_hostel_repo/pages/final_screen.dart';
 import 'package:vit_hostel_repo/pages/main_page.dart';
 import 'package:vit_hostel_repo/pages/otp_screen.dart';
 import 'package:vit_hostel_repo/pages/start_screen.dart';
@@ -23,18 +21,6 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  void blockScreen() {
-    setState(() {
-      activeScreen = 'block-screen';
-    });
-  }
-
-  void messScreen() {
-    setState(() {
-      activeScreen = 'final-screen';
-    });
-  }
-
   void homeScreen() {
     setState(() {
       activeScreen = 'home-screen';
@@ -48,18 +34,6 @@ class _LoginPageState extends State<LoginPage> {
     );
     if (activeScreen == "next-screen") {
       screenWidget = OtpScreen(
-        nextScreen: blockScreen,
-      );
-    }
-
-    if (activeScreen == "block-screen") {
-      screenWidget = BlockSreen(
-        nextScreen: messScreen,
-      );
-    }
-
-    if (activeScreen == "final-screen") {
-      screenWidget = FinalScreen(
         nextScreen: homeScreen,
       );
     }
