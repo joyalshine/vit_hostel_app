@@ -21,9 +21,21 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  void backScreen() {
+    setState(() {
+      activeScreen = 'start-screen';
+    });
+  }
+
   void homeScreen() {
     setState(() {
       activeScreen = 'home-screen';
+    });
+  }
+
+  void emailScreen() {
+    setState(() {
+      activeScreen = 'email-screen';
     });
   }
 
@@ -35,6 +47,7 @@ class _LoginPageState extends State<LoginPage> {
     if (activeScreen == "next-screen") {
       screenWidget = OtpScreen(
         nextScreen: homeScreen,
+        backScreen: backScreen,
       );
     }
 
@@ -52,6 +65,7 @@ class _LoginPageState extends State<LoginPage> {
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
       home: Scaffold(
+          extendBodyBehindAppBar: true,
           resizeToAvoidBottomInset: false,
           body: Container(
             decoration: const BoxDecoration(

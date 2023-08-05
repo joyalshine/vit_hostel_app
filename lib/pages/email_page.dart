@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class StartScreen extends StatelessWidget {
-  const StartScreen({super.key, required this.nextScreen});
+class EmailPage extends StatelessWidget {
+  const EmailPage({super.key, required this.nextScreen});
 
   final void Function() nextScreen;
 
@@ -57,79 +57,62 @@ class StartScreen extends StatelessWidget {
               color: const Color.fromARGB(18, 245, 245, 245),
               borderRadius: BorderRadius.circular(30.0)),
           child: Column(children: [
-            // const SizedBox(
-            //   height: 20,
-            // ),
+            const SizedBox(
+              height: 20,
+            ),
             Text(
-              "Welcome back",
+              "Use VIT mail ID only",
               style: GoogleFonts.poppins(
-                fontSize: 30,
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
+                fontSize: 14.33,
+                fontWeight: FontWeight.w600,
+                color: const Color.fromARGB(118, 255, 255, 255),
+              ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            Text(
+              "Email",
+              style: GoogleFonts.poppins(
+                fontSize: 14.33,
+                fontWeight: FontWeight.w600,
+                color: const Color.fromARGB(182, 255, 255, 255),
+              ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: TextFormField(
+                autocorrect: true,
+                decoration: InputDecoration(
+                  hintText: 'Enter Your Email Here...',
+                  prefixIcon: const Icon(
+                    Icons.account_circle_outlined,
+                    color: Colors.grey,
+                  ),
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  filled: true,
+                  fillColor: Colors.grey.shade200.withOpacity(0.1),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(12.0)),
+                    borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.2), width: 2),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                    borderSide: BorderSide(
+                      color: Colors.white.withOpacity(0.2),
+                      width: 2,
+                    ),
+                  ),
+                ),
               ),
             ),
             const SizedBox(
               height: 20,
             ),
-            // Text(
-            //   "Use VIT mail ID only",
-            //   style: GoogleFonts.poppins(
-            //     fontSize: 14.33,
-            //     fontWeight: FontWeight.w600,
-            //     color: const Color.fromARGB(118, 255, 255, 255),
-            //   ),
-            // ),
-            // const SizedBox(
-            //   height: 15,
-            // ),
-            // Text(
-            //   "Email",
-            //   style: GoogleFonts.poppins(
-            //     fontSize: 14.33,
-            //     fontWeight: FontWeight.w600,
-            //     color: const Color.fromARGB(182, 255, 255, 255),
-            //   ),
-            // ),
-            // const SizedBox(
-            //   height: 15,
-            // ),
-
-            // Form(
-            //   key: formKey,
-            //   child: SizedBox(
-            //     width: double.infinity,
-            //     child: TextFormField(
-            //       autocorrect: true,
-            //       decoration: InputDecoration(
-            //         hintText: 'Enter Your Email Here...',
-            //         prefixIcon: const Icon(
-            //           Icons.account_circle_outlined,
-            //           color: Colors.grey,
-            //         ),
-            //         hintStyle: const TextStyle(color: Colors.grey),
-            //         filled: true,
-            //         fillColor: Colors.grey.shade200.withOpacity(0.1),
-            //         enabledBorder: OutlineInputBorder(
-            //           borderRadius:
-            //               const BorderRadius.all(Radius.circular(12.0)),
-            //           borderSide: BorderSide(
-            //               color: Colors.white.withOpacity(0.2), width: 2),
-            //         ),
-            //         focusedBorder: OutlineInputBorder(
-            //           borderRadius:
-            //               const BorderRadius.all(Radius.circular(10.0)),
-            //           borderSide: BorderSide(
-            //             color: Colors.white.withOpacity(0.2),
-            //             width: 2,
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            // const SizedBox(
-            //   height: 20,
-            // ),
             TextButton(
               onPressed: nextScreen,
               style: ButtonStyle(
