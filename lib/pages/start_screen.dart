@@ -13,7 +13,7 @@ class StartScreen extends StatelessWidget {
     queryData = MediaQuery.of(context);
     double _deviceWidth = queryData.size.width;
     double _deviceHeight = queryData.size.height;
-
+    final keyboard = MediaQuery.of(context).viewInsets.bottom;
     return Column(
       children: [
         SizedBox(
@@ -127,33 +127,33 @@ class StartScreen extends StatelessWidget {
               const SizedBox(
                 height: 20,
               ),
-              SizedBox(
-                width: double.infinity,
-                child: TextButton(
-                  onPressed: nextScreen,
-                  child: Ink(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xfff44336), Color(0xff3d4eaf)],
-                        stops: [0, 1],
-                        begin: Alignment.centerRight,
-                        end: Alignment.centerLeft,
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              TextButton(
+                onPressed: nextScreen,
+                style: ButtonStyle(
+                  overlayColor: MaterialStateProperty.all(
+                    const Color.fromARGB(0, 255, 193, 7),
+                  ),
+                ),
+                child: Container(
+                  alignment: Alignment.center,
+                  constraints:
+                      const BoxConstraints(minWidth: 30.0, minHeight: 50.0),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xfff44336), Color(0xff3d4eaf)],
+                      stops: [0, 1],
+                      begin: Alignment.centerRight,
+                      end: Alignment.centerLeft,
                     ),
-                    child: Container(
-                      constraints:
-                          const BoxConstraints(minWidth: 30.0, minHeight: 50.0),
-                      alignment: Alignment.center,
-                      child: const Text(
-                        'Sign in',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 17.92,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                  ),
+                  child: const Text(
+                    'Sign in',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17.92,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
