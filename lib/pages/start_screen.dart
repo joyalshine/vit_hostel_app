@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class StartScreen extends StatelessWidget {
+class StartScreen extends StatefulWidget {
   const StartScreen({super.key, required this.nextScreen});
 
   final void Function() nextScreen;
 
   @override
+  State<StartScreen> createState() => _StartScreenState();
+}
+
+class _StartScreenState extends State<StartScreen> {
+  late GlobalKey formKey;
+
+  @override
+  void initState() {
+    formKey = GlobalKey<FormState>();
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
     MediaQueryData queryData;
     queryData = MediaQuery.of(context);
     double _deviceWidth = queryData.size.width;
@@ -130,7 +141,7 @@ class StartScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: TextButton(
-                  onPressed: nextScreen,
+                  onPressed: widget.nextScreen,
                   child: Ink(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
