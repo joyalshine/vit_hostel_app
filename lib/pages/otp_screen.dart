@@ -3,41 +3,56 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class OtpScreen extends StatelessWidget {
-  const OtpScreen({super.key, required this.nextScreen});
+  const OtpScreen(
+      {super.key, required this.nextScreen, required this.backScreen});
 
   final void Function() nextScreen;
+  final void Function() backScreen;
+
   @override
   Widget build(BuildContext context) {
     MediaQueryData queryData;
     queryData = MediaQuery.of(context);
-    double _deviceWidth = queryData.size.width;
-    double _deviceHeight = queryData.size.height;
+    double deviceWidth = queryData.size.width;
+    double deviceHeight = queryData.size.height;
+
+    final keyboard = MediaQuery.of(context).viewInsets.bottom;
 
     return Column(
       children: [
-        Container(
-          height: _deviceHeight * 0.05,
-          padding: EdgeInsets.only(
-              left: _deviceWidth * 0.07,
-              right: _deviceWidth * 0.9,
-              bottom: _deviceHeight * 0.00,
-              top: _deviceHeight * 0.07),
-          child: const Icon(Icons.arrow_back),
+        AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: ElevatedButton(
+            onPressed: backScreen,
+            style: ButtonStyle(
+                fixedSize: MaterialStateProperty.all(const Size(10, 20)),
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                ),
+                backgroundColor: MaterialStateProperty.all(Colors.transparent)),
+            // padding: const EdgeInsets.all(6),
+            child: const Icon(
+              Icons.arrow_back,
+              color: (Color.fromARGB(255, 247, 247, 247)),
+            ),
+          ),
         ),
         Container(
-          height: _deviceHeight * 0.35,
+          height: deviceHeight * 0.25,
           padding: EdgeInsets.only(
-              left: _deviceWidth * 0.07,
-              right: _deviceWidth * 0.07,
-              bottom: _deviceHeight * 0.00,
-              top: _deviceHeight * 0.07),
+            left: deviceWidth * 0.07,
+            right: deviceWidth * 0.07,
+          ),
           child: Image.asset(
             'assets/images/otp-icon.png',
           ),
         ),
         Expanded(
           child: Container(
-            margin: const EdgeInsets.only(top: 40),
+            margin: const EdgeInsets.only(top: 20),
             width: double.infinity,
             decoration: BoxDecoration(
                 color: const Color.fromARGB(18, 245, 245, 245),
@@ -46,7 +61,7 @@ class OtpScreen extends StatelessWidget {
               margin: const EdgeInsets.only(top: 0, left: 40, right: 40),
               child: Column(children: [
                 const SizedBox(
-                  height: 20,
+                  height: 5,
                 ),
                 Text(
                   "Enter OTP",
@@ -57,7 +72,7 @@ class OtpScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 10,
                 ),
                 Text(
                   "An 4 digit code has been sent to arnab.ghsoh2021@gmail.com",
@@ -69,89 +84,53 @@ class OtpScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(
-                  height: 40,
+                  height: 20,
                 ),
                 SizedBox(
                   height: 50,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: List.generate(
-                        4,
-                        (index) => SizedBox(
-                              width: 56,
-                              child: TextField(
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(1)
-                                ],
-                                cursorColor:
-                                    const Color.fromARGB(137, 27, 27, 26),
-                                onChanged: (value) => {
-                                  if (value.length == 1 && index <= 5)
-                                    {
-                                      FocusScope.of(context).nextFocus(),
-                                    }
-                                  else if (value.isEmpty && index > 0)
-                                    {
-                                      FocusScope.of(context).previousFocus(),
-                                    }
-                                },
-                                style: GoogleFonts.poppins(
-                                  fontSize: 19,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                                textAlign: TextAlign.center,
-                                decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor:
-                                        Colors.grey.shade200.withOpacity(0.2),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: BorderSide(
-                                        color: Colors.grey.shade200
-                                            .withOpacity(0.2),
-                                      ),
-                                    ),
-                                    focusColor:
-                                        Colors.grey.shade200.withOpacity(0.2),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: BorderSide(
-                                        color: Colors.grey.shade200
-                                            .withOpacity(0.2),
-                                      ),
-                                    )),
-                              ),
-                            )),
-                  ),
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
-                SizedBox(
-                  child: TextButton(
-                    onPressed: nextScreen,
-                    child: Ink(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Color(0xfff44336), Color(0xff3d4eaf)],
-                          stops: [0, 1],
-                          begin: Alignment.centerRight,
-                          end: Alignment.centerLeft,
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                      ),
-                      child: Container(
-                        constraints: const BoxConstraints(
-                            minWidth: 30.0, minHeight: 50.0),
-                        alignment: Alignment.center,
-                        child: const Text(
-                          'Continue',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
+                      4,
+                      (index) => SizedBox(
+                        width: 56,
+                        child: TextField(
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(1)
+                          ],
+                          cursorColor: const Color.fromARGB(137, 27, 27, 26),
+                          onChanged: (value) => {
+                            if (value.length == 1 && index <= 5)
+                              {
+                                FocusScope.of(context).nextFocus(),
+                              }
+                            else if (value.isEmpty && index > 0)
+                              {
+                                FocusScope.of(context).previousFocus(),
+                              }
+                          },
+                          style: GoogleFonts.poppins(
+                            fontSize: 19,
+                            fontWeight: FontWeight.w600,
                             color: Colors.white,
-                            fontSize: 17.92,
-                            fontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey.shade200.withOpacity(0.2),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(
+                                color: Colors.grey.shade200.withOpacity(0.2),
+                              ),
+                            ),
+                            focusColor: Colors.grey.shade200.withOpacity(0.2),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              // borderSide: BorderSide(
+                              //   color: Colors.grey.shade200.withOpacity(0.2),
+                              // ),
+                            ),
                           ),
                         ),
                       ),
@@ -159,7 +138,38 @@ class OtpScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 20,
+                ),
+                TextButton(
+                  onPressed: nextScreen,
+                  style: ButtonStyle(
+                    overlayColor: MaterialStateProperty.all(
+                      const Color.fromARGB(0, 255, 193, 7),
+                    ),
+                  ),
+                  child: Container(
+                    alignment: Alignment.center,
+                    constraints:
+                        const BoxConstraints(minWidth: 30.0, minHeight: 50.0),
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0x6e8f6ad0), Color(0x996539b3)],
+                        stops: [0, 1],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                    ),
+                    child: const Text(
+                      'Continue',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 17.92,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

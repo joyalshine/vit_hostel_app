@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vit_hostel_repo/pages/email_page.dart';
 import 'package:vit_hostel_repo/pages/main_page.dart';
 import 'package:vit_hostel_repo/pages/otp_screen.dart';
 import 'package:vit_hostel_repo/pages/start_screen.dart';
@@ -15,9 +16,15 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   var activeScreen = 'start-screen';
 
-  void switchScreen() {
+  void otpScreen() {
     setState(() {
-      activeScreen = 'next-screen';
+      activeScreen = 'otp-screen';
+    });
+  }
+
+  void backScreen() {
+    setState(() {
+      activeScreen = 'email-screen';
     });
   }
 
@@ -27,14 +34,27 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  void emailScreen() {
+    setState(() {
+      activeScreen = 'email-screen';
+    });
+  }
+
   @override
   Widget build(context) {
     Widget screenWidget = StartScreen(
-      nextScreen: switchScreen,
+      nextScreen: emailScreen,
     );
-    if (activeScreen == "next-screen") {
+
+    if (activeScreen == "email-screen") {
+      screenWidget = EmailScreen(
+        nextScreen: otpScreen,
+      );
+    }
+    if (activeScreen == "otp-screen") {
       screenWidget = OtpScreen(
         nextScreen: homeScreen,
+        backScreen: backScreen,
       );
     }
 
@@ -52,7 +72,8 @@ class _LoginPageState extends State<LoginPage> {
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
       home: Scaffold(
-          resizeToAvoidBottomInset: true,
+          extendBodyBehindAppBar: true,
+          resizeToAvoidBottomInset: false,
           body: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
