@@ -41,7 +41,7 @@ class OtpScreen extends StatelessWidget {
           ),
         ),
         Container(
-          height: deviceHeight * 0.35,
+          height: deviceHeight * 0.25,
           padding: EdgeInsets.only(
             left: deviceWidth * 0.07,
             right: deviceWidth * 0.07,
@@ -52,7 +52,7 @@ class OtpScreen extends StatelessWidget {
         ),
         Expanded(
           child: Container(
-            margin: const EdgeInsets.only(top: 40),
+            margin: const EdgeInsets.only(top: 20),
             width: double.infinity,
             decoration: BoxDecoration(
                 color: const Color.fromARGB(18, 245, 245, 245),
@@ -61,7 +61,7 @@ class OtpScreen extends StatelessWidget {
               margin: const EdgeInsets.only(top: 0, left: 40, right: 40),
               child: Column(children: [
                 const SizedBox(
-                  height: 20,
+                  height: 5,
                 ),
                 Text(
                   "Enter OTP",
@@ -72,7 +72,7 @@ class OtpScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 10,
                 ),
                 Text(
                   "An 4 digit code has been sent to arnab.ghsoh2021@gmail.com",
@@ -84,7 +84,7 @@ class OtpScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(
-                  height: 40,
+                  height: 20,
                 ),
                 SizedBox(
                   height: 50,
@@ -138,7 +138,7 @@ class OtpScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(
-                  height: 40,
+                  height: 20,
                 ),
                 TextButton(
                   onPressed: nextScreen,
@@ -170,9 +170,6 @@ class OtpScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 10,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
