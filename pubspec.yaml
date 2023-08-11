@@ -80,6 +80,11 @@ flutter:
     - assets/images/background-image-1.png
     - assets/images/background-image-2.png
     - assets/images/Ellipse-1.png
+    - assets/images/av.png
+    - assets/images/profile_hostel_icon.png
+    - assets/images/profile_at_icon.png
+    - assets/images/mess_icon.png
+    
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
