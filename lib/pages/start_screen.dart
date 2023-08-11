@@ -83,67 +83,8 @@ class _StartScreenState extends State<StartScreen> {
             const SizedBox(
               height: 20,
             ),
-            // Text(
-            //   "Use VIT mail ID only",
-            //   style: GoogleFonts.poppins(
-            //     fontSize: 14.33,
-            //     fontWeight: FontWeight.w600,
-            //     color: const Color.fromARGB(118, 255, 255, 255),
-            //   ),
-            // ),
-            // const SizedBox(
-            //   height: 15,
-            // ),
-            // Text(
-            //   "Email",
-            //   style: GoogleFonts.poppins(
-            //     fontSize: 14.33,
-            //     fontWeight: FontWeight.w600,
-            //     color: const Color.fromARGB(182, 255, 255, 255),
-            //   ),
-            // ),
-            // const SizedBox(
-            //   height: 15,
-            // ),
-
-            // Form(
-            //   key: formKey,
-            //   child: SizedBox(
-            //     width: double.infinity,
-            //     child: TextFormField(
-            //       autocorrect: true,
-            //       decoration: InputDecoration(
-            //         hintText: 'Enter Your Email Here...',
-            //         prefixIcon: const Icon(
-            //           Icons.account_circle_outlined,
-            //           color: Colors.grey,
-            //         ),
-            //         hintStyle: const TextStyle(color: Colors.grey),
-            //         filled: true,
-            //         fillColor: Colors.grey.shade200.withOpacity(0.1),
-            //         enabledBorder: OutlineInputBorder(
-            //           borderRadius:
-            //               const BorderRadius.all(Radius.circular(12.0)),
-            //           borderSide: BorderSide(
-            //               color: Colors.white.withOpacity(0.2), width: 2),
-            //         ),
-            //         focusedBorder: OutlineInputBorder(
-            //           borderRadius:
-            //               const BorderRadius.all(Radius.circular(10.0)),
-            //           borderSide: BorderSide(
-            //             color: Colors.white.withOpacity(0.2),
-            //             width: 2,
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            // const SizedBox(
-            //   height: 20,
-            // ),
             TextButton(
-              onPressed: nextScreen,
+              onPressed: widget.nextScreen,
               style: ButtonStyle(
                 overlayColor: MaterialStateProperty.all(
                   const Color.fromARGB(0, 255, 193, 7),

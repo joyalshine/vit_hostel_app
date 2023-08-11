@@ -1,19 +1,108 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
 
 String getFormattedDate() {
   final date = DateTime.now();
   const List<String> days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday'];
-  const List<String> months =['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const List<String> months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   
   return days[date.weekday-1] + " " + months[date.month - 1] + " " + date.day.toString() + ", " + date.year.toString();
 }
 
 
-class ScreenHome extends StatelessWidget {
+class ScreenHome extends StatefulWidget {
   const ScreenHome({super.key, required this.changeScreen});
 
   final void Function(int index) changeScreen;
+
+  @override
+  State<ScreenHome> createState() => _ScreenHomeState();
+}
+
+class _ScreenHomeState extends State<ScreenHome> {
+  late String welcomeText;
+   Map<String,String> menu = {
+    'type' : '',
+    'menu' : '',
+    'time': ''  
+  };
+  bool menuAvailable = true;
+  void fetchPageData(){
+    final Box userBox= Hive.box('userDetails');
+    final Box menuBox= Hive.box('messMenu');
+    var name = userBox.get('name');
+    welcomeText = "Welcome " + name.split(' ')[0]  + ',';
+
+    final date = DateTime.now();
+    dynamic todaysMenu;
+    if(menuBox.get(date.day.toString()) == null){
+      todaysMenu = {};
+    }
+    else{
+      todaysMenu = menuBox.get(date.day.toString());
+    }
+    if(todaysMenu.isNotEmpty){
+      String menuOf = '';
+      int currMinutes = date.hour * 60 + date.minute;
+      if(currMinutes < 571){
+        menuOf = 'breakfast';
+      } 
+      else if(currMinutes < 871){
+        menuOf = 'lunch';
+      }
+      else if(currMinutes < 1081){
+        menuOf = 'snacks';
+      }
+      else if(currMinutes < 1261){
+        menuOf = 'dinner';
+      }
+      else{
+        menuOf = 'closed';
+      }
+
+      menuOf == 'breakfast' ? menu = {
+        'type' : 'Breakfast',
+        'menu' : todaysMenu['breakfast']!,
+        'time' : '7:00 AM to 9:00 AM'
+      } :
+      menuOf == 'lunch' ? menu = {
+        'type' : 'Lunch',
+        'menu' : todaysMenu['lunch']!,
+        'time' : '12:30 PM to 2:30 PM'
+      } :
+      menuOf == 'snacks'? menu = {
+        'type' : 'Snacks',
+        'menu' : todaysMenu['snacks']!,
+        'time' : '4:00 PM to 6:00 PM'
+      } :
+      menuOf == 'dinner'? menu = {
+        'type' : 'Dinner',
+        'menu' : todaysMenu['dinner']!,
+        'time' : '7:00 PM to 9:00 PM'
+      } : menu = {
+        'type' : '',
+        'menu' : 'Its too late. Dont worry night canteen is there',
+        'time' : '10:30 PM to 12:30 AM'
+      };
+    } 
+    else{
+      menuAvailable = false;
+      menu = {
+        'type' : '',
+        'menu' : 'Sorry data is not available',
+        'time' : ''
+      };
+    }   
+    
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchPageData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +130,11 @@ class ScreenHome extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 15),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 15),
                     child: Text(
-                      "Welcome Sabby",
-                      style: TextStyle(
+                      welcomeText,
+                      style: const TextStyle(
                           fontSize: 18,
                           color: Color(0xff3156AC),
                           fontWeight: FontWeight.w700),
@@ -85,7 +174,7 @@ class ScreenHome extends StatelessWidget {
               ),
               InkWell(
                 onTap: () {
-                  changeScreen(4);
+                  widget.changeScreen(4);
                 },
                 child: Container(
                   margin: const EdgeInsets.only(top: 10, right: 4, left: 4),
@@ -104,45 +193,45 @@ class ScreenHome extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(14),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: menuAvailable? CrossAxisAlignment.start : CrossAxisAlignment.center,
                       children: [
-                        const Text(
-                          'Breakfast',
-                          style: TextStyle(
+                        menuAvailable ? Text(
+                          menu['type']!,
+                          style: const TextStyle(
                               color: Color(0xffFFFFFF),
                               fontSize: 17,
                               fontWeight: FontWeight.w500),
-                        ),
+                        ) : const SizedBox(),
                         const SizedBox(
                           height: 8,
                         ),
-                        const Text(
-                            'Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg',
-                            style: TextStyle(
+                        Text(
+                            menu['menu']!,
+                            style: const TextStyle(
                               color: Color(0xffFFFFFF),
                             )),
                         const SizedBox(
                           height: 4,
                         ),
-                        Container(
+                        menuAvailable ? Container(
                           width: double.infinity,
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.timelapse_outlined,
                                 color: Colors.white,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 6,
                               ),
                               Text(
-                                '7:00 AM to 9:00 AM',
-                                style: TextStyle(color: Colors.white),
+                                menu['time']!,
+                                style: const TextStyle(color: Colors.white),
                               )
                             ],
                           ),
-                        ),
+                        ) : const SizedBox(),
                       ],
                     ),
                   ),
@@ -267,7 +356,7 @@ class ScreenHome extends StatelessWidget {
                             ),
                           ),
                           Container(
-                            constraints: BoxConstraints(
+                            constraints: const BoxConstraints(
                               minHeight: 155,
                             ),
                             width: double.infinity,

@@ -1,27 +1,133 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vit_hostel_repo/backend/backend.dart';
+import 'package:vit_hostel_repo/firebase/user_validation.dart';
 
-class EmailScreen extends StatelessWidget {
+class EmailScreen extends StatefulWidget {
   const EmailScreen({super.key, required this.nextScreen});
 
-  final void Function() nextScreen;
+  final void Function(int,String,Map<String,dynamic>) nextScreen;
 
   @override
+  State<EmailScreen> createState() => _EmailScreenState();
+}
+
+class _EmailScreenState extends State<EmailScreen> {
+  bool _isLoading = false;
+  var emailController = TextEditingController();
+  
+  @override
   Widget build(BuildContext context) {
-    double _deviceWidth = MediaQuery.of(context).size.width;
-    double _deviceHeight = MediaQuery.of(context).size.height;
-    final keyboard = MediaQuery.of(context).viewInsets.bottom;
+    double deviceWidth = MediaQuery.of(context).size.width;
+    double deviceHeight = MediaQuery.of(context).size.height;
+
+    void validate() async{
+      String email = emailController.text.trim();
+      FocusManager.instance.primaryFocus?.unfocus();
+      if(email.isEmpty || email == ''){
+        const snackBar = SnackBar(
+            behavior: SnackBarBehavior.floating,
+            margin:  EdgeInsets.only(bottom: 15,left: 5,right: 5),
+            backgroundColor: Color.fromARGB(255, 223, 57, 19),
+            content: Text('Enter a Email!'),
+          );
+
+          setState(() {
+            _isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+      else if(!email.contains('@')){
+        const snackBar = SnackBar(
+            behavior: SnackBarBehavior.floating,
+            margin:  EdgeInsets.only(bottom: 15,left: 5,right: 5),
+            backgroundColor: Color.fromARGB(255, 223, 57, 19),
+            content: Text('Enter a valid Email!'),
+          );
+
+          setState(() {
+            _isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+      else if(!email.contains('vitstudent.ac.in')){
+        const snackBar = SnackBar(
+            behavior: SnackBarBehavior.floating,
+            margin:  EdgeInsets.only(bottom: 15,left: 5,right: 5),
+            backgroundColor: Color.fromARGB(255, 223, 57, 19),
+            content: Text('Enter your VIT mail ID!'),
+          );
+
+          setState(() {
+            _isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+      else{
+        Map<String,dynamic> userDetails = await validateUser(email);
+        if(userDetails['isValid']){
+          final response = await sendOTP(userDetails['email'], userDetails['details']['name']);
+          if(response['status']){
+            widget.nextScreen(response['otp'],userDetails['email'],userDetails);
+          }
+          else{
+            const snackBar = SnackBar(
+              behavior: SnackBarBehavior.floating,
+              margin:  EdgeInsets.only(bottom: 15,left: 5,right: 5),
+              backgroundColor: Color.fromARGB(255, 223, 57, 19),
+              duration: Duration(seconds: 10),
+              content: Text('Some error'),
+            );
+
+            setState(() {
+              _isLoading = false;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
+        }
+        else{
+          if(userDetails['type'] == 'invalidUser'){
+            const snackBar = SnackBar(
+              behavior: SnackBarBehavior.floating,
+              margin:  EdgeInsets.only(bottom: 15,left: 5,right: 5),
+              backgroundColor: Color.fromARGB(255, 223, 57, 19),
+              duration: Duration(seconds: 10),
+              content: Text('Check the entered mail ID. We are unable to find your details. If issue persists please contact the hostel office'),
+            );
+
+            setState(() {
+              _isLoading = false;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
+          else{
+            const snackBar = SnackBar(
+              behavior: SnackBarBehavior.floating,
+              margin:  EdgeInsets.only(bottom: 15,left: 5,right: 5),
+              backgroundColor: Color.fromARGB(255, 223, 57, 19),
+              duration: Duration(seconds: 10),
+              content: Text('Some error occured. try again later'),
+            );
+
+            setState(() {
+              _isLoading = false;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
+        }
+      }
+    }
 
     return Column(
       children: [
         SizedBox(
-          height: _deviceHeight * 0.30,
+          height: deviceHeight * 0.30,
           child: Padding(
             padding: EdgeInsets.only(
-                left: _deviceWidth * 0.07,
-                right: _deviceWidth * 0.07,
-                bottom: _deviceHeight * 0.00,
-                top: _deviceHeight * 0.07),
+                left: deviceWidth * 0.07,
+                right: deviceWidth * 0.07,
+                bottom: deviceHeight * 0.00,
+                top: deviceHeight * 0.07),
             child: SizedBox(
               width: double.infinity,
               child: Center(
@@ -39,7 +145,7 @@ class EmailScreen extends StatelessWidget {
           ),
         ),
         Container(
-          height: _deviceHeight * 0.70,
+          height: deviceHeight * 0.70,
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 25.0, horizontal: 35),
           child: Column(
@@ -62,40 +168,49 @@ class EmailScreen extends StatelessWidget {
                 height: 15,
               ),
               SizedBox(
-                width: double.infinity,
-                child: TextFormField(
-                  autocorrect: true,
-                  decoration: InputDecoration(
-                    hintText: 'Enter Your Email Here...',
-                    prefixIcon: const Icon(
-                      Icons.account_circle_outlined,
-                      color: Colors.grey,
-                    ),
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    filled: true,
-                    fillColor: Colors.grey.shade200.withOpacity(0.1),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(12.0)),
-                      borderSide: BorderSide(
-                          color: Colors.white.withOpacity(0.2), width: 2),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(
-                        color: Colors.white.withOpacity(0.2),
-                        width: 2,
+                  width: double.infinity,
+                  child: TextFormField(
+                    controller: emailController,
+                    autocorrect: false,
+                    keyboardType: TextInputType.emailAddress,
+                    textCapitalization: TextCapitalization.none,
+                    decoration: InputDecoration(
+                      hintText: 'Enter Your Email Here...',
+                      prefixIcon: const Icon(
+                        Icons.account_circle_outlined,
+                        color: Colors.grey,
+                      ),
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      filled: true,
+                      fillColor: Colors.grey.shade200.withOpacity(0.1),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(12.0)),
+                        borderSide: BorderSide(
+                            color: Colors.white.withOpacity(0.2), width: 2),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(
+                          color: Colors.white.withOpacity(0.2),
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
+  
               const SizedBox(
                 height: 20,
               ),
               TextButton(
-                onPressed: nextScreen,
+                onPressed: _isLoading ? null : (){
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  validate();
+                },
                 style: ButtonStyle(
                   overlayColor: MaterialStateProperty.all(
                     const Color.fromARGB(0, 255, 193, 7),
@@ -114,7 +229,13 @@ class EmailScreen extends StatelessWidget {
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(20.0)),
                   ),
-                  child: const Text(
+                  child: _isLoading ? 
+                  const Center(child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                    color: Colors.purpleAccent,
+                  ),) 
+                  : 
+                  const Text(
                     'Sign in',
                     textAlign: TextAlign.center,
                     style: TextStyle(

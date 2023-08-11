@@ -1,7 +1,8 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-
+import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vit_hostel_repo/pages/fade_transition.dart';
+import 'package:vit_hostel_repo/pages/login_page.dart';
 class Settings extends StatefulWidget {
   const Settings({super.key});
 
@@ -11,6 +12,16 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   bool notificationValue = true;
+  bool _isLoading = false;
+
+  void logout() async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('loggedIn',false);
+    await Hive.box('userDetails').clear();
+    await Hive.box('messMenu').clear();
+    await Hive.box('complaints').clear();
+    Navigator.pushReplacement(context,MaterialPageRoute(builder: (ctx) => FadeTransitionContainer(screen: const LoginPage())));
+  } 
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +58,7 @@ class _SettingsState extends State<Settings> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 25),
-                  child: CircleAvatar(
-                    backgroundColor: Colors.blue.withOpacity(0),
-                    backgroundImage:
-                        const AssetImage('assets/images/profile_avatar.png'),
-                    radius: 25,
-                  ),
+                  child: ElevatedButton(onPressed: _isLoading? null : logout, child: _isLoading? const Center(child: CircularProgressIndicator(strokeWidth: 3,),) : const Text('Logout'))
                 ),
               ],
             ),

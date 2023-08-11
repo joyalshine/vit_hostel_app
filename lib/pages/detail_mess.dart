@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:vit_hostel_repo/firebase/initial_data_fetch.dart';
 
 class DetailMessMenu extends StatefulWidget {
   const DetailMessMenu({super.key});
@@ -9,109 +11,62 @@ class DetailMessMenu extends StatefulWidget {
 
 class _DetailMessMenuState extends State<DetailMessMenu>
     with TickerProviderStateMixin {
-  final List<Map<String, String>> details = [
-    {
-      "date": "1",
-      "day": "Mon",
-      "index": "0",
-      "breakfast": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "Lunch": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "snacks": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "dinner": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
-    },
-    {
-      "date": "2",
-      "day": "Tue",
-      "index": "1",
-      "breakfast": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "Lunch": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "snacks": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "dinner": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
-    },
-    {
-      "date": "3",
-      "day": "Wed",
-      "index": "2",
-      "breakfast": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "Lunch": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "snacks": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "dinner": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
-    },
-    {
-      "date": "4",
-      "day": "Thu",
-      "index": "3",
-      "breakfast": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "Lunch": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "snacks": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "dinner": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
-    },
-    {
-      "date": "5",
-      "day": "Fri",
-      "index": "4",
-      "breakfast": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "Lunch": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "snacks": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "dinner": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
-    },
-    {
-      "date": "6",
-      "day": "Sat",
-      "index": "5",
-      "breakfast": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "Lunch": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "snacks": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "dinner": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
-    },
-    {
-      "date": "7",
-      "day": "Sun",
-      "index": "6",
-      "breakfast": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "Lunch": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "snacks": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg""",
-      "dinner": """Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, 
-Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
+
+  final List<Map<String, dynamic>> details = [];
+  late int noOfDays;
+
+  void loadMessData(){
+    final Box menuBox= Hive.box('messMenu');
+    List<String> months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    List<String> days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    final date = DateTime.now();
+    int year = date.year;
+    int month = date.month;
+    String key = months[month - 1] + year.toString();
+    if(menuBox.get('month') == key){
+      int endDate = monthDaysCount[month]!;
+      if(month == 2){
+        if((year % 4 == 0 && year % 100 != 0) || year % 400 == 0){
+          endDate= 29;
+        }
+      }
+      noOfDays = endDate;
+      for(int i=1;i<=endDate;i++){
+        var menu = menuBox.get(i.toString());
+        Map<String, dynamic> temp;
+        if(menu == null){
+          temp = {
+          "date": i.toString(),
+          "day": days[DateTime(year, month, i).weekday - 1],
+          "exists" : false
+        };
+        }
+        else{
+          temp = {
+          "date": i.toString(),
+          "day": days[DateTime(year, month, i).weekday - 1],
+          "exists" : true,
+          "breakfast": menu['breakfast'] ?? '',
+          "lunch":  menu['lunch'] ?? '',
+          "snacks": menu['snacks'] ?? '',
+          "dinner": menu['dinner'] ?? ''
+        };
+        }
+        details.add(temp);
+      }
     }
-  ];
+  }
 
   @override
   void initState() {
     super.initState();
+    loadMessData();
   }
 
   @override
   Widget build(BuildContext context) {
     TabController controller =
-        TabController(length: 7, vsync: this, initialIndex: 3);
+        TabController(length: noOfDays, vsync: this, initialIndex: DateTime.now().day - 1);
 
     return ListView(
       children: [
@@ -174,7 +129,7 @@ Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
                   height: 20,
                 ),
                 DefaultTabController(
-                  length: 7,
+                  length: noOfDays,
                   child: Container(
                     padding: const EdgeInsets.all(0),
                     height: 70,
@@ -193,6 +148,7 @@ Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
                       tabs: [
                         ...details.map(
                           (item) {
+                            print(item);
                             return Tab(
                               height: double.infinity,
                               child: Container(
@@ -246,8 +202,8 @@ Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
                     child: TabBarView(
                       controller: controller,
                       children: [
-                        ...details.map((e) {
-                          return Column(
+                        ...details.map((item) {
+                          return item['exists'] ?  Column(
                             children: [
                               Container(
                                 margin: const EdgeInsets.only(
@@ -279,9 +235,9 @@ Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
                                       const SizedBox(
                                         height: 8,
                                       ),
-                                      const Text(
-                                          'Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg',
-                                          style: TextStyle(
+                                      Text(
+                                          item['breakfast'] ?? "",
+                                          style: const TextStyle(
                                             color: Color(0xffFFFFFF),
                                           )),
                                       const SizedBox(
@@ -289,9 +245,9 @@ Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
                                       ),
                                       Container(
                                         width: double.infinity,
-                                        child: Row(
+                                        child: const Row(
                                           mainAxisAlignment: MainAxisAlignment.end,
-                                          children: const [
+                                          children: [
                                             Icon(
                                               Icons.timelapse_outlined,
                                               color: Colors.white,
@@ -340,9 +296,9 @@ Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
                                       const SizedBox(
                                         height: 8,
                                       ),
-                                      const Text(
-                                          'Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg',
-                                          style: TextStyle(
+                                      Text(
+                                          item['lunch']  ?? "",
+                                          style: const TextStyle(
                                             color: Color(0xffFFFFFF),
                                           )),
                                       const SizedBox(
@@ -350,9 +306,9 @@ Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
                                       ),
                                       Container(
                                         width: double.infinity,
-                                        child: Row(
+                                        child: const Row(
                                           mainAxisAlignment: MainAxisAlignment.end,
-                                          children: const [
+                                          children:  [
                                             Icon(
                                               Icons.timelapse_outlined,
                                               color: Colors.white,
@@ -401,9 +357,9 @@ Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
                                       const SizedBox(
                                         height: 8,
                                       ),
-                                      const Text(
-                                          'Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg',
-                                          style: TextStyle(
+                                      Text(
+                                          item['snacks'] ?? "",
+                                          style: const TextStyle(
                                             color: Color(0xffFFFFFF),
                                           )),
                                       const SizedBox(
@@ -411,9 +367,9 @@ Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
                                       ),
                                       Container(
                                         width: double.infinity,
-                                        child: Row(
+                                        child: const Row(
                                           mainAxisAlignment: MainAxisAlignment.end,
-                                          children: const [
+                                          children:  [
                                             Icon(
                                               Icons.timelapse_outlined,
                                               color: Colors.white,
@@ -462,9 +418,9 @@ Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
                                       const SizedBox(
                                         height: 8,
                                       ),
-                                      const Text(
-                                          'Paav Bhaji, Corn Flakes, Idly, Sambar , Chutney, Bread, Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg',
-                                          style: TextStyle(
+                                      Text(
+                                          item['dinner'] ?? "",
+                                          style: const TextStyle(
                                             color: Color(0xffFFFFFF),
                                           )),
                                       const SizedBox(
@@ -472,9 +428,9 @@ Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
                                       ),
                                       Container(
                                         width: double.infinity,
-                                        child: Row(
+                                        child: const Row(
                                           mainAxisAlignment: MainAxisAlignment.end,
-                                          children: const [
+                                          children:  [
                                             Icon(
                                               Icons.timelapse_outlined,
                                               color: Colors.white,
@@ -494,7 +450,19 @@ Butter, Jam, Tea, Coffee,  Milk, Salad, Boiled Egg"""
                                 ),
                               ),
                             ],
-                          );
+                          ) :
+                          const Column(
+                            children: [
+                              SizedBox(height: 50,),
+                              Icon(
+                                Icons.error_outline,
+                                size: 35,
+                                color: Colors.blue,
+                              ),
+                              SizedBox(height: 10,),
+                              Text('No data available',style: TextStyle(color: Colors.blue, fontSize: 19),)
+                            ],
+                          ); 
                         })
                       ],
                     )),
