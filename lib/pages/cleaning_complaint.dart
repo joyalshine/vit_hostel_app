@@ -1,22 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/adapters.dart';
+import 'package:hive/hive.dart';
 import 'package:quickalert/quickalert.dart';
 
 import '../firebase/complaint_add_functions.dart';
 
-class MaintenanceComplaint extends StatefulWidget {
-  const MaintenanceComplaint({super.key});
+class CleaningComplaint extends StatefulWidget {
+  const CleaningComplaint({super.key});
 
   @override
-  State<MaintenanceComplaint> createState() => _MaintenanceComplaintState();
+  State<CleaningComplaint> createState() => _CleaningComplaintState();
 }
 
-class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
-  TextEditingController blockTextController = TextEditingController(text : 'Q Block');
-  TextEditingController roomTextController = TextEditingController(text : '1249');
-  TextEditingController messageController = TextEditingController();
-
+class _CleaningComplaintState extends State<CleaningComplaint> {
   Box userBox = Hive.box('userDetails');
   @override
   void initState() {
@@ -25,60 +21,64 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
     blockTextController.text = userBox.get('block');
     roomTextController.text = userBox.get('room').toString();
   }
+  TextEditingController blockTextController = TextEditingController();
 
-  List<bool> mainteneanceOf = [false,false,false,false,false,false];
+  TextEditingController roomTextController = TextEditingController();
+  TextEditingController messageController = TextEditingController();
 
-  final List<String> dropdownValues = ['Morning before 12','Lunch Break','After Lunch','Other'];
-  String? availableTime;
   
+
+  bool roomIsChecked = false;
+  bool generalsChecked = false;
+  bool indianToiletIsChecked = false;
+  bool westernToiletIsChecked = false;
+  bool purifierAreaIsChecked = false;
+  bool bathroomsIsChecked = false;
+
   bool complaintError = false;
-  bool mainteneanceOfError = false;
-  bool availableTimeError = false;
+  bool cleaningOfError = false;
   bool _isLoading = false;
   int remainingCharacters = 100;
 
-  int mainteneanceOfCount = 0;
-  List<int> mainteneanceOfSelected = [];
+  int cleaningOfCount = 0;
+  List<int> cleaningOfSelected = [];
 
-  void checkMaintenanceOfCurrent(){
-    if(mainteneanceOfCount >= 2){
-      mainteneanceOfCount--;
-      setState(() {
-        mainteneanceOf[mainteneanceOfSelected[0]] = false;
-      });
-      mainteneanceOfSelected.removeAt(0);
+  void checkCleaningOfCurrent(){
+    if(cleaningOfCount >= 2){
+      cleaningOfCount--;
+      if(cleaningOfSelected[0] == 0) setState(() => roomIsChecked = false);
+      if(cleaningOfSelected[0] == 1) setState(() => generalsChecked = false);
+      if(cleaningOfSelected[0] == 2) setState(() => indianToiletIsChecked = false);
+      if(cleaningOfSelected[0] == 3) setState(() => westernToiletIsChecked = false);
+      if(cleaningOfSelected[0] == 4) setState(() => purifierAreaIsChecked = false);
+      if(cleaningOfSelected[0] == 5) setState(() => bathroomsIsChecked = false);
+      cleaningOfSelected.removeAt(0);
     }
   }
 
-  Future<bool> validateAndSave() async{
+ Future<bool> validateAndSave() async{
     setState(() {
       _isLoading = true;
     });
     String message = messageController.text;
-    List<String> mainteneanceOfList = [];
+    List<String> cleaningOf = [];
     bool errors = false;
-    if(mainteneanceOf[0]) mainteneanceOfList.add('lights');
-    if(mainteneanceOf[1]) mainteneanceOfList.add('fan');
-    if(mainteneanceOf[2]) mainteneanceOfList.add('switch');
-    if(mainteneanceOf[3]) mainteneanceOfList.add('ac');
-    if(mainteneanceOf[4]) mainteneanceOfList.add('carpentry');
-    if(mainteneanceOf[5]) mainteneanceOfList.add('painting');
-    if(mainteneanceOfList.isEmpty){
+    if(roomIsChecked) cleaningOf.add('room');
+    if(generalsChecked) cleaningOf.add('general');
+    if(purifierAreaIsChecked) cleaningOf.add('purifier');
+    if(westernToiletIsChecked) cleaningOf.add('western');
+    if(indianToiletIsChecked) cleaningOf.add('indian');
+    if(bathroomsIsChecked) cleaningOf.add('bathroom');
+    if(cleaningOf.isEmpty){
       errors = true;
       setState(() {
-        mainteneanceOfError = true;
+        cleaningOfError = true;
       });
     }
     if(message == '' || message == null){
       errors = true;
       setState(() {
         complaintError = true;
-      });
-    }
-    if(availableTime == '' || availableTime == null){
-      errors = true;
-      setState(() {
-        availableTimeError = true;
       });
     }
     if(!errors){
@@ -88,18 +88,20 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
         'room' : roomTextController.text,
         'studentEmail' : email,
         'timestamp' : FieldValue.serverTimestamp(),
-        'category' : mainteneanceOfList,
-        'availableTime' : availableTime,
+        'category' : cleaningOf,
         'complaint' : message
       };
-      bool response  = await addMaintenanceComplaint(dataToUpload);
+      bool response  = await addCleaningRequest(dataToUpload);
       setState(() {
         _isLoading = false;
       }); 
       if(response){
-        for(int i=0;i<=5;i++) {
-          setState(() => mainteneanceOf[i] = false);
-        }
+        if(roomIsChecked) setState(() => roomIsChecked = false);
+        if(generalsChecked) setState(() => generalsChecked = false);
+        if(purifierAreaIsChecked) setState(() => purifierAreaIsChecked = false);
+        if(westernToiletIsChecked) setState(() => westernToiletIsChecked = false);
+        if(indianToiletIsChecked) setState(() => indianToiletIsChecked = false);
+        if(bathroomsIsChecked) setState(() => bathroomsIsChecked = false);
         setState(() {
           remainingCharacters = 100;
         });
@@ -119,156 +121,150 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.only(bottom: 40),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: <Color>[
-                const Color(0xffF7F8FA),
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: <Color>[
+                  const Color(0xffF7F8FA),
                 const Color(0xffDAE8F5).withOpacity(1),
                 const Color(0xffDAE8F5).withOpacity(1),
                 const Color(0xffDAE8F5).withOpacity(1),
                 const Color(0xffDBE9F6).withOpacity(1),
-              ],
-              tileMode: TileMode.mirror,
-            ),
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                top: 40,
-                left: 20,
-                right: 20,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Color(0xFFDDE0F6),
-                        borderRadius: BorderRadius.circular(10),
-                        shape: BoxShape.rectangle,
-                      ),
-                      child: Center(
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.arrow_back_outlined,
-                            color: Colors.black, // Arrow color
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ),
-                    ),
-                    Image.asset(
-                      "assets/images/av.png",
-                      width: 60,
-                    ),
-                  ],
-                ),
+                ],
+                tileMode: TileMode.mirror,
               ),
-              Container(
-                alignment: Alignment.topLeft,
-                padding: EdgeInsets.only(
-                  top: 125,
-                  left: 25,
-                  right: 35,
+            ),
+        child: SingleChildScrollView(
+          child: SizedBox(
+            
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 40,
+                  left: 20,
+                  right: 20,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Color(0xFFDDE0F6),
+                          borderRadius: BorderRadius.circular(10),
+                          shape: BoxShape.rectangle,
+                        ),
+                        child: Center(
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.arrow_back_outlined,
+                              color: Colors.black, // Arrow color
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ),
+                      ),
+                      Padding(
+                      padding: const EdgeInsets.only(right: 25),
+                      child: CircleAvatar(
+                        backgroundColor: Colors.blue.withOpacity(0),
+                        backgroundImage:
+                            const AssetImage('assets/images/profile_avatar.png'),
+                        radius: 25,
+                      ),
+                    ),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Maintenance Complaint",
-                      style: TextStyle(
-                        fontSize: 25,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
+                Container(
+                  alignment: Alignment.topLeft,
+                  padding: const EdgeInsets.only(
+                    top: 125,
+                    left: 25,
+                    right: 35,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Cleaning Request",
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      "Block",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Color.fromARGB(255, 95, 168, 227),
-                        fontWeight: FontWeight.bold,
+                      const SizedBox(height: 20),
+                      const Text(
+                        "Block",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Color.fromARGB(255, 95, 168, 227),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Color(0xFFDDE0F6),
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color.fromARGB(255, 117, 116, 116),
-                            spreadRadius: 1,
-                            blurRadius: 8,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: TextFormField(
-                          controller: blockTextController,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
+                      SizedBox(height: 10),
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 239, 239, 255),
+                          borderRadius: BorderRadius.circular(10),
+                          
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: TextFormField(
+                            controller: blockTextController,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      "Room No",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: const Color.fromARGB(255, 95, 168, 227),
-                        fontWeight: FontWeight.bold,
+                      SizedBox(height: 20),
+                      Text(
+                        "Room No",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: const Color.fromARGB(255, 95, 168, 227),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Color(0xFFDDE0F6),
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color.fromARGB(255, 117, 116, 116),
-                            spreadRadius: 1,
-                            blurRadius: 5,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: TextFormField(
-                          controller: roomTextController,
-                          maxLines: 1,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
+                      SizedBox(height: 10),
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 239, 239, 255),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: TextFormField(
+                            controller: roomTextController,
+                            readOnly: true,
+                            decoration:const InputDecoration(
+                              border: InputBorder.none,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      "Maintenance of",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: const Color.fromARGB(255, 95, 168, 227),
-                        fontWeight: FontWeight.bold,
+                      const SizedBox(height: 20),
+                      const Text(
+                        "Cleaning of",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Color.fromARGB(255, 95, 168, 227),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    SizedBox(
+                      const SizedBox(height: 10),
+                      SizedBox(
                         width: double.infinity,
                         child: Row(
                           children: [
@@ -279,7 +275,7 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     const Text(
-                                      "Lights",
+                                      "Room",
                                       style: TextStyle(
                                         fontSize: 15,
                                         color: Colors.black,
@@ -287,18 +283,18 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
                                       ),
                                     ),
                                     Checkbox(
-                                      value: mainteneanceOf[0],
+                                      value: roomIsChecked,
                                       activeColor: Colors.blue,
                                       checkColor: Colors.white,
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                                       onChanged: (newValue) {
-                                        checkMaintenanceOfCurrent();
-                                        mainteneanceOfCount++;
-                                        mainteneanceOfSelected.add(0);
+                                        checkCleaningOfCurrent();
+                                        cleaningOfCount++;
+                                        cleaningOfSelected.add(0);
                                         setState(() {
-                                          mainteneanceOf[0] = newValue!;
+                                          roomIsChecked = newValue!;
                                         });
-                                        if(mainteneanceOfError) mainteneanceOfError = false;
+                                        if(cleaningOfError) cleaningOfError = false;
                                       },
                                     ),
                                   ],
@@ -307,7 +303,7 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text(
-                                    "Fan",
+                                    "General",
                                     style: TextStyle(
                                       fontSize: 15,
                                       color: Colors.black,
@@ -315,16 +311,15 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
                                     ),
                                   ),
                                   Checkbox(
-                                    value: mainteneanceOf[1],
+                                    value: generalsChecked,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                                     onChanged: (newValue) {
-                                        checkMaintenanceOfCurrent();
-                                        mainteneanceOfCount++;
-                                        mainteneanceOfSelected.add(1);
+                                        checkCleaningOfCurrent();
+                                        cleaningOfCount++;
+                                        cleaningOfSelected.add(1);
                                         setState(() {
-                                          mainteneanceOf[1] = newValue!;
+                                          generalsChecked = newValue!;
                                         });
-                                        if(mainteneanceOfError) mainteneanceOfError = false;
                                       },
                                   ),
                                 ],
@@ -333,7 +328,7 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text(
-                                    "Switch",
+                                    "Indian Toilets",
                                     style: TextStyle(
                                       fontSize: 15,
                                       color: Colors.black,
@@ -341,16 +336,15 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
                                     ),
                                   ),// Add this line to create space
                                   Checkbox(
-                                    value: mainteneanceOf[2],
+                                    value: indianToiletIsChecked,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                                     onChanged: (newValue) {
-                                        checkMaintenanceOfCurrent();
-                                        mainteneanceOfCount++;
-                                        mainteneanceOfSelected.add(2);
+                                        checkCleaningOfCurrent();
+                                        cleaningOfCount++;
+                                        cleaningOfSelected.add(2);
                                         setState(() {
-                                          mainteneanceOf[2] = newValue!;
+                                          indianToiletIsChecked = newValue!;
                                         });
-                                        if(mainteneanceOfError) mainteneanceOfError = false;
                                       },
                                   ),
                                 ],
@@ -364,7 +358,7 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text(
-                                    "AC",
+                                    "Western Toilets",
                                     style: TextStyle(
                                       fontSize: 15,
                                       color: Colors.black,
@@ -372,16 +366,15 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
                                     ),
                                   ),
                                   Checkbox(
-                                    value: mainteneanceOf[3],
+                                    value: westernToiletIsChecked,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                                     onChanged: (newValue) {
-                                        checkMaintenanceOfCurrent();
-                                        mainteneanceOfCount++;
-                                        mainteneanceOfSelected.add(3);
+                                        checkCleaningOfCurrent();
+                                        cleaningOfCount++;
+                                        cleaningOfSelected.add(3);
                                         setState(() {
-                                          mainteneanceOf[3] = newValue!;
+                                          westernToiletIsChecked = newValue!;
                                         });
-                                        if(mainteneanceOfError) mainteneanceOfError = false;
                                       },
                                   ),
                                 ],
@@ -390,7 +383,7 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text(
-                                    "Carpentry",
+                                    "Purifier Area",
                                     style: TextStyle(
                                       fontSize: 15,
                                       color: Colors.black,
@@ -398,16 +391,15 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
                                     ),
                                   ),
                                   Checkbox(
-                                    value: mainteneanceOf[4],
+                                    value: purifierAreaIsChecked,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                                     onChanged: (newValue) {
-                                        checkMaintenanceOfCurrent();
-                                        mainteneanceOfCount++;
-                                        mainteneanceOfSelected.add(4);
+                                        checkCleaningOfCurrent();
+                                        cleaningOfCount++;
+                                        cleaningOfSelected.add(4);
                                         setState(() {
-                                          mainteneanceOf[4] = newValue!;
+                                          purifierAreaIsChecked = newValue!;
                                         });
-                                        if(mainteneanceOfError) mainteneanceOfError = false;
                                       },
                                   ),
                                 ],
@@ -416,7 +408,7 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text(
-                                    "Painting",
+                                    "Bathrooms",
                                     style: TextStyle(
                                       fontSize: 15,
                                       color: Colors.black,
@@ -424,18 +416,17 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
                                     ),
                                   ),
                                   Checkbox(
-                                    value: mainteneanceOf[5],
+                                    value: bathroomsIsChecked,
                                     activeColor: Colors.lightBlue,
                                     checkColor: Colors.white,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                                     onChanged: (newValue) {
-                                        checkMaintenanceOfCurrent ();
-                                        mainteneanceOfCount++;
-                                        mainteneanceOfSelected.add(5);
+                                        checkCleaningOfCurrent();
+                                        cleaningOfCount++;
+                                        cleaningOfSelected.add(5);
                                         setState(() {
-                                          mainteneanceOf[5] = newValue!;
+                                          bathroomsIsChecked = newValue!;
                                         });
-                                        if(mainteneanceOfError) mainteneanceOfError = false;
                                       },
                                   ),
                                 ],
@@ -445,89 +436,25 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
                           ],
                         ),
                       ),
-                      mainteneanceOfError ? const Text(
+                      cleaningOfError ? Text(
                         'Please Select a type',
                         style: TextStyle(
                           color: Colors.red
                         ),
                       ) : 
-                      const SizedBox(),
-                    const SizedBox(height: 20),
-                    const Text(
-                      "Available Time",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Color.fromARGB(255, 95, 168, 227),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: availableTimeError ?  Colors.red : Colors.transparent,width: 1.3) ,
-                          color: Color.fromARGB(255, 239, 239, 255),
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color.fromARGB(255, 117, 116, 116),
-                              spreadRadius: 1,
-                              blurRadius: 1,
-                              offset: Offset(0,1.5),
-                            ),
-                          ],
-                        ),
-                      child: DropdownButtonFormField<String>(
-                        hint: const Text('Select the available time'),
-                        padding: EdgeInsets.all(0),
-                        value: availableTime,
-                        borderRadius: const BorderRadius.all(Radius.circular(8)),
-                        icon: const Icon(Icons.keyboard_arrow_down),
-                        elevation: 15,
-                        isExpanded: true,
-                        decoration:  InputDecoration(
-                          focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent),borderRadius: BorderRadius.all(Radius.circular(7))),
-                          filled: true,
-                          fillColor: const Color.fromARGB(255, 239, 239, 255),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.transparent, width: 2),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent),borderRadius: BorderRadius.all(Radius.circular(7)))
-                        ),
-                        style: const TextStyle(color: Colors.black),
-                        onChanged: (String? value) {
-                          setState(() {
-                            availableTime = value ?? '';
-                          });
-                        },
-                        items: dropdownValues.map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                    const SizedBox(height: 9,),
-                    availableTimeError ? const Text(
-                        'Please Select a type',
+                      SizedBox(),
+                      const SizedBox(height: 15), // Adjusted the spacing
+                      const Text(
+                        "Complaint",
                         style: TextStyle(
-                          color: Colors.red
+                          fontSize: 20,
+                          color: const Color.fromARGB(255, 95, 168, 227),
+                          fontWeight: FontWeight.bold,
                         ),
-                      ) : 
-                      const SizedBox(),
-                    const SizedBox(height: 20), // Adjusted the spacing
-                    const Text(
-                      "Complaint",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Color.fromARGB(255, 95, 168, 227),
-                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    
-                    SizedBox(height: 20),
-                    Container(
+      
+                      SizedBox(height: 20),
+                      Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
                           border: Border.all(color: complaintError ?  Colors.red : Colors.transparent,width: 1.3) ,
@@ -566,8 +493,8 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
                           ),
                         ),
                       ),
-                    SizedBox(height: 10), // Add spacing
-                    Align(
+                      const SizedBox(height: 10), // Add spacing
+                      Align(
                         alignment: complaintError ? Alignment.bottomLeft : Alignment.bottomRight,
                         child: complaintError ? const Text(
                           "Please enter a message",
@@ -584,9 +511,9 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
                           ),
                         ),
                       ),
-
-                    SizedBox(height: 20),
-                    Align(
+      
+                      SizedBox(height: 20),
+                      Align(
                         alignment: Alignment.center,
                         child: ElevatedButton(
                           onPressed: () async{
@@ -629,14 +556,14 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
                           ),
                         ),
                       ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
-      
     );
   }
 }

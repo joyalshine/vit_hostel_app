@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
             menuBox.put('month',menuFetchResponse['key']);
           }
       }
-      Navigator.pushReplacement(context,MaterialPageRoute(builder: (ctx) => FadeTransitionContainer(screen: const MainPage())));
+      Navigator.pushReplacement(context,MaterialPageRoute(builder: (ctx) => FadeTransitionContainer(screen: MainPage(newIndex: 0,))));
     }
 }
 

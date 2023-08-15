@@ -148,7 +148,6 @@ class _DetailMessMenuState extends State<DetailMessMenu>
                       tabs: [
                         ...details.map(
                           (item) {
-                            print(item);
                             return Tab(
                               height: double.infinity,
                               child: Container(

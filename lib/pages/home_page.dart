@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:vit_hostel_repo/pages/Maintenance_complaint.dart';
+import 'package:vit_hostel_repo/pages/cleaning_complaint.dart';
+import 'package:vit_hostel_repo/pages/detail_mess.dart';
+import 'package:vit_hostel_repo/pages/discipline_complaint.dart';
+import 'package:vit_hostel_repo/pages/food_complaint.dart';
 
 
 String getFormattedDate() {
@@ -12,9 +17,7 @@ String getFormattedDate() {
 
 
 class ScreenHome extends StatefulWidget {
-  const ScreenHome({super.key, required this.changeScreen});
-
-  final void Function(int index) changeScreen;
+  const ScreenHome({super.key});
 
   @override
   State<ScreenHome> createState() => _ScreenHomeState();
@@ -109,20 +112,7 @@ class _ScreenHomeState extends State<ScreenHome> {
     return ListView(
       children: [
         Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: <Color>[
-              const Color(0xffF7F8FA),
-              const Color(0xffDAE8F5).withOpacity(1),
-              const Color(0xffDAE8F5).withOpacity(1),
-              const Color(0xffDAE8F5).withOpacity(1),
-              const Color(0xffDBE9F6).withOpacity(1),
-            ],
-            tileMode: TileMode.mirror,
-          ),
-        ),
+        
         child: Padding(
           padding: const EdgeInsets.all(15),
           child: Column(
@@ -174,7 +164,7 @@ class _ScreenHomeState extends State<ScreenHome> {
               ),
               InkWell(
                 onTap: () {
-                  widget.changeScreen(4);
+                  Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => const DetailMessMenu()));
                 },
                 child: Container(
                   margin: const EdgeInsets.only(top: 10, right: 4, left: 4),
@@ -259,30 +249,35 @@ class _ScreenHomeState extends State<ScreenHome> {
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         children: [
-                          Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(17),
-                              color: const Color(0xff5451D6),
-                            ),
-                            child: Column(
-                              children: [
-                                Image.asset(
-                                  'assets/images/maintenance-home-logo.png',
-                                  width: 170,
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.only(bottom: 8.0),
-                                  child: Text(
-                                    'Maintenance',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white,
+                          InkWell(
+                            onTap: () async{
+                              Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => const MaintenanceComplaint()));
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(17),
+                                color: const Color(0xff5451D6),
+                              ),
+                              child: Column(
+                                children: [
+                                  Image.asset(
+                                    'assets/images/maintenance-home-logo.png',
+                                    width: 170,
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.only(bottom: 8.0),
+                                    child: Text(
+                                      'Maintenance',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                           Container(
@@ -326,70 +321,80 @@ class _ScreenHomeState extends State<ScreenHome> {
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         children: [
-                          Container(
-                            constraints: BoxConstraints(
-                              minHeight: 153
-                            ),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(17),
-                              color: const Color(0xff5451D6),
-                            ),
-                            child: Column(
-                              children: [
-                                Image.asset(
-                                  'assets/images/cleaning-home-logo.png',
-                                  width: 110,
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.only(bottom: 8.0),
-                                  child: Text(
-                                    'Cleaning',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white,
+                          InkWell(
+                            onTap: (){
+                              Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => const CleaningComplaint()));
+                            },
+                            child: Container(
+                              constraints: BoxConstraints(
+                                minHeight: 140
+                              ),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(17),
+                                color: const Color(0xff5451D6),
+                              ),
+                              child: Column(
+                                children: [
+                                  Image.asset(
+                                    'assets/images/cleaning-home-logo.png',
+                                    width: 110,
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.only(bottom: 8.0),
+                                    child: Text(
+                                      'Cleaning',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                          Container(
-                            constraints: const BoxConstraints(
-                              minHeight: 155,
-                            ),
-                            width: double.infinity,
-                            margin: const EdgeInsets.only(
-                              top: 10,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(17),
-                              color: const Color(0xff5451D6),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Image.asset(
-                                    'assets/images/food-home-logo.png',
-                                    width: 150,
-                                  ),
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.only(bottom: 8.0),
-                                  child: Text(
-                                    'Food',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white,
+                          InkWell(
+                            onTap: (){
+                              Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => const FoodComplaint()));
+                            },
+                            child: Container(
+                              constraints: const BoxConstraints(
+                                minHeight: 155,
+                              ),
+                              width: double.infinity,
+                              margin: const EdgeInsets.only(
+                                top: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(17),
+                                color: const Color(0xff5451D6),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Image.asset(
+                                      'assets/images/food-home-logo.png',
+                                      width: 150,
                                     ),
                                   ),
-                                ),
-                              ],
+                                  const Padding(
+                                    padding: EdgeInsets.only(bottom: 8.0),
+                                    child: Text(
+                                      'Food',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -398,41 +403,46 @@ class _ScreenHomeState extends State<ScreenHome> {
                   ),
                 ],
               ),
-              Container(
-                margin: const EdgeInsets.only(top: 3, left: 4, right: 4),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(19),
-                  color: const Color(0xff5451D6),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 4,
-                      spreadRadius: 1, //New
-                    )
-                  ],
-                ),
-                width: double.infinity,
-                child: Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.asset(
-                          'assets/images/discipline-home-logo.png',
-                          width: 130,
-                        ),
-                      ),
-                      const Text(
-                        'Discipline',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                      ),
+              InkWell(
+                onTap: (){
+                  Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => const DisciplineComplaint()));
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 3, left: 4, right: 4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(19),
+                    color: const Color(0xff5451D6),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 4,
+                        spreadRadius: 1, //New
+                      )
                     ],
+                  ),
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset(
+                            'assets/images/discipline-home-logo.png',
+                            width: 130,
+                          ),
+                        ),
+                        const Text(
+                          'Discipline',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               )
