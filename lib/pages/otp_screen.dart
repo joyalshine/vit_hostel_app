@@ -1,13 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class OtpScreen extends StatelessWidget {
+class OtpScreen extends StatefulWidget {
   const OtpScreen(
-      {super.key, required this.nextScreen, required this.backScreen});
+      {super.key, required this.nextScreen, required this.backScreen,required this.otp, required this.email, required this.userDetails});
 
   final void Function() nextScreen;
   final void Function() backScreen;
+  final int otp;
+  final String email;
+  final Map<String,dynamic> userDetails;
+
+  @override
+  State<OtpScreen> createState() => _OtpScreenState();
+}
+
+class _OtpScreenState extends State<OtpScreen> {
+  bool _isLoading = false;
+  final List<TextEditingController> inputControllers = [TextEditingController(),TextEditingController(),TextEditingController(),TextEditingController()];
+
+
+  void validateOTP() async{
+    setState(() {
+      _isLoading = true;
+    });
+    FocusManager.instance.primaryFocus?.unfocus();
+    String enteredOTP = inputControllers[0].text + inputControllers[1].text + inputControllers[2].text + inputControllers[3].text;
+    if(enteredOTP.isEmpty || enteredOTP == ''){
+      const snackBar = SnackBar(
+            behavior: SnackBarBehavior.floating,
+            margin:  EdgeInsets.only(bottom: 15,left: 5,right: 5),
+            backgroundColor: Color.fromARGB(255, 223, 57, 19),
+            content: Text('Enter the OTP!'),
+          );
+
+          setState(() {
+            _isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+    else if(enteredOTP !=  widget.otp.toString()){
+      const snackBar = SnackBar(
+            behavior: SnackBarBehavior.floating,
+            margin:  EdgeInsets.only(bottom: 15,left: 5,right: 5),
+            backgroundColor: Color.fromARGB(255, 69, 69, 83),
+            content: Text('Invalid OTP!'),
+          );
+
+          setState(() {
+            _isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+    else{
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('loggedIn',true);
+      widget.nextScreen();
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -16,20 +70,18 @@ class OtpScreen extends StatelessWidget {
     double deviceWidth = queryData.size.width;
     double deviceHeight = queryData.size.height;
 
-    final keyboard = MediaQuery.of(context).viewInsets.bottom;
-
     return Column(
       children: [
         AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
           title: ElevatedButton(
-            onPressed: backScreen,
+            onPressed: widget.backScreen,
             style: ButtonStyle(
                 fixedSize: MaterialStateProperty.all(const Size(10, 20)),
                 shape: MaterialStateProperty.all(
                   RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(32),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 backgroundColor: MaterialStateProperty.all(Colors.transparent)),
@@ -75,7 +127,16 @@ class OtpScreen extends StatelessWidget {
                   height: 10,
                 ),
                 Text(
-                  "An 4 digit code has been sent to arnab.ghsoh2021@gmail.com",
+                  "An 4 digit code has been sent to",
+                  style: GoogleFonts.poppins(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  widget.email,
                   style: GoogleFonts.poppins(
                     fontSize: 17,
                     fontWeight: FontWeight.w600,
@@ -94,11 +155,15 @@ class OtpScreen extends StatelessWidget {
                       4,
                       (index) => SizedBox(
                         width: 56,
+                        height: 56,
                         child: TextField(
+                          controller: inputControllers[index],
+                          keyboardType: TextInputType.number,
                           inputFormatters: [
-                            LengthLimitingTextInputFormatter(1)
+                            LengthLimitingTextInputFormatter(1),
+                            FilteringTextInputFormatter.allow(RegExp('[0-9]')),
                           ],
-                          cursorColor: const Color.fromARGB(137, 27, 27, 26),
+                          cursorColor: const Color.fromARGB(134, 105, 110, 110),
                           onChanged: (value) => {
                             if (value.length == 1 && index <= 5)
                               {
@@ -109,27 +174,25 @@ class OtpScreen extends StatelessWidget {
                                 FocusScope.of(context).previousFocus(),
                               }
                           },
+                          cursorHeight: 17,
                           style: GoogleFonts.poppins(
-                            fontSize: 19,
+                            fontSize: 22,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
+                            height: 1
                           ),
                           textAlign: TextAlign.center,
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Colors.grey.shade200.withOpacity(0.2),
-                            border: OutlineInputBorder(
+                            enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(
-                                color: Colors.grey.shade200.withOpacity(0.2),
-                              ),
+                              borderSide: BorderSide(color: Colors.grey.shade200.withOpacity(0.2), width: 1.0),
                             ),
-                            focusColor: Colors.grey.shade200.withOpacity(0.2),
+                            
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              // borderSide: BorderSide(
-                              //   color: Colors.grey.shade200.withOpacity(0.2),
-                              // ),
+                              borderSide: const BorderSide(color: Color.fromARGB(255, 40, 105, 180), width: 1.0),
                             ),
                           ),
                         ),
@@ -141,7 +204,7 @@ class OtpScreen extends StatelessWidget {
                   height: 20,
                 ),
                 TextButton(
-                  onPressed: nextScreen,
+                  onPressed: _isLoading? null : validateOTP,
                   style: ButtonStyle(
                     overlayColor: MaterialStateProperty.all(
                       const Color.fromARGB(0, 255, 193, 7),
@@ -160,7 +223,7 @@ class OtpScreen extends StatelessWidget {
                       ),
                       borderRadius: BorderRadius.all(Radius.circular(20.0)),
                     ),
-                    child: const Text(
+                    child: _isLoading? const Center(child: CircularProgressIndicator(strokeWidth: 3,),) : const Text(
                       'Continue',
                       textAlign: TextAlign.center,
                       style: TextStyle(

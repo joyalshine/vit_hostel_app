@@ -5,10 +5,12 @@ import 'package:vit_hostel_repo/pages/history_page.dart';
 import 'package:vit_hostel_repo/pages/home_page.dart';
 import 'package:vit_hostel_repo/pages/notification_manager.dart';
 import 'package:vit_hostel_repo/pages/settings_page.dart';
+import 'package:vit_hostel_repo/pages/cleaning_complaint.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  const MainPage({super.key, required this.newIndex });
 
+  final int newIndex;
   @override
   State<MainPage> createState() => _MainPageState();
 }
@@ -19,15 +21,12 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void initState() {
-    _currentIndex = 0;
+    _currentIndex = widget.newIndex;
     screens = [
-      ScreenHome(
-        changeScreen: changeScreen,
-      ),
+      const ScreenHome(),
       const NotificationManager(),
       const History(),
       const Settings(),
-      const DetailMessMenu()
     ];
     super.initState();
   }
@@ -41,7 +40,27 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: screens[_currentIndex],
+      body: SafeArea(
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: <Color>[
+                  const Color(0xffF7F8FA),
+                  const Color(0xffDAE8F5).withOpacity(1),
+                  const Color(0xffDAE8F5).withOpacity(1),
+                  const Color(0xffDAE8F5).withOpacity(1),
+                  const Color(0xffDBE9F6).withOpacity(1),
+                ],
+                tileMode: TileMode.mirror,
+              ),
+            ),
+          child: screens[_currentIndex],
+        ),
+      ),
       extendBody: true,
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(

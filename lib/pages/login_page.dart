@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vit_hostel_repo/pages/data_fetching.dart';
 import 'package:vit_hostel_repo/pages/email_page.dart';
-import 'package:vit_hostel_repo/pages/main_page.dart';
 import 'package:vit_hostel_repo/pages/otp_screen.dart';
 import 'package:vit_hostel_repo/pages/start_screen.dart';
 
@@ -15,9 +15,15 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   var activeScreen = 'start-screen';
+  late int otpCode;
+  late String userEmail;
+  late Map<String,dynamic> userDetails;
 
-  void otpScreen() {
+  void otpScreen(int otp, String email,Map<String,dynamic> details) {
     setState(() {
+      otpCode = otp;
+      userEmail = email;
+      userDetails = details;
       activeScreen = 'otp-screen';
     });
   }
@@ -28,9 +34,9 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  void homeScreen() {
+  void dataFetchScreen() {
     setState(() {
-      activeScreen = 'home-screen';
+      activeScreen = 'dataFetch-screen';
     });
   }
 
@@ -53,14 +59,18 @@ class _LoginPageState extends State<LoginPage> {
     }
     if (activeScreen == "otp-screen") {
       screenWidget = OtpScreen(
-        nextScreen: homeScreen,
+        nextScreen: dataFetchScreen,
         backScreen: backScreen,
+        otp: otpCode,
+        email: userEmail,
+        userDetails: userDetails
       );
     }
 
-    if (activeScreen == "home-screen") {
-      screenWidget = const MainPage();
+    if (activeScreen == "dataFetch-screen") {
+      screenWidget = DataFetchScreen(userDetails);
     }
+    
 
     MediaQueryData queryData;
     queryData = MediaQuery.of(context);
