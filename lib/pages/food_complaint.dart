@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:vit_hostel_repo/firebase/complaint_add_functions.dart';
+import 'package:vit_hostel_repo/pages/profile_screen.dart';
 
 class FoodComplaint extends StatefulWidget {
   const FoodComplaint({super.key});
@@ -85,43 +86,52 @@ class _FoodComplaintState extends State<FoodComplaint> {
         ),
       ),
       child: SingleChildScrollView(
-        child: SizedBox(
-          child: Stack(children: [
-            Positioned(
-                top: 40,
-                left: 20,
-                right: 20,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Color(0xFFDDE0F6),
-                        borderRadius: BorderRadius.circular(10),
-                        shape: BoxShape.rectangle,
-                      ),
-                      child: Center(
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.arrow_back_outlined,
-                            color: Colors.black, // Arrow color
+        child: SafeArea(
+          child: Column(children: [
+            Padding(
+                  padding: const EdgeInsets.only(right: 15.0,left: 15,top: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Color(0xFFDDE0F6),
+                          borderRadius: BorderRadius.circular(10),
+                          shape: BoxShape.rectangle,
+                        ),
+                        child: Center(
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.arrow_back_outlined,
+                              color: Colors.black, // Arrow color
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
                           ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
                         ),
                       ),
+                      Padding(
+                    padding: const EdgeInsets.only(right: 25),
+                    child: InkWell(
+                      onTap: (){
+                        Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => Profile()));
+                      },
+                      child: CircleAvatar(
+                        backgroundColor: Colors.blue.withOpacity(0),
+                        backgroundImage:
+                            const AssetImage('assets/images/profile_avatar.png'),
+                        radius: 25,
+                      ),
                     ),
-                    Image.asset(
-                      "assets/images/av.png",
-                      width: 80,
-                    ),
-                  ],
-                )),
+                  ),
+                    ],
+                  ),
+                ),
             Container(
               alignment: Alignment.topLeft,
               padding: EdgeInsets.only(
-                top: 150,
+                top: 35,
                 left: 25,
                 right: 35,
               ),

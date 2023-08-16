@@ -19,6 +19,8 @@ Future<bool> addCleaningRequest(Map<String, dynamic> data) async {
               var temp = docSnapshot.data();
               Timestamp time = docSnapshot.get('timestamp');
               temp['timestamp'] = time.toDate();
+              temp['complaintType'] = 'Cleaning';
+              temp['id'] = docSnapshot.id;
               newComplaintList.add(temp);
             }
           }
@@ -28,6 +30,8 @@ Future<bool> addCleaningRequest(Map<String, dynamic> data) async {
               var temp = docSnapshot.data();
               Timestamp time = docSnapshot.get('timestamp');
               temp['timestamp'] = time.toDate();
+              temp['complaintType'] = 'Cleaning';
+              temp['id'] = docSnapshot.id;
               newComplaintList.add(temp);
             }
         }
@@ -60,6 +64,8 @@ Future<bool> addMaintenanceComplaint(Map<String, dynamic> data) async {
               var temp = docSnapshot.data();
               Timestamp time = docSnapshot.get('timestamp');
               temp['timestamp'] = time.toDate();
+              temp['complaintType'] = 'Maintenance';
+              temp['id'] = docSnapshot.id;
               newComplaintList.add(temp);
             }
           }
@@ -69,6 +75,8 @@ Future<bool> addMaintenanceComplaint(Map<String, dynamic> data) async {
               var temp = docSnapshot.data();
               Timestamp time = docSnapshot.get('timestamp');
               temp['timestamp'] = time.toDate();
+              temp['complaintType'] = 'Maintenance';
+              temp['id'] = docSnapshot.id;
               newComplaintList.add(temp);
             }
         }
@@ -100,6 +108,8 @@ Future<bool> addMessComplaint(Map<String, dynamic> data) async {
               var temp = docSnapshot.data();
               Timestamp time = docSnapshot.get('timestamp');
               temp['timestamp'] = time.toDate();
+              temp['complaintType'] = 'Mess';
+              temp['id'] = docSnapshot.id;
               newComplaintList.add(temp);
             }
           }
@@ -109,6 +119,8 @@ Future<bool> addMessComplaint(Map<String, dynamic> data) async {
               var temp = docSnapshot.data();
               Timestamp time = docSnapshot.get('timestamp');
               temp['timestamp'] = time.toDate();
+              temp['complaintType'] = 'Mess';
+              temp['id'] = docSnapshot.id;
               newComplaintList.add(temp);
             }
         }
@@ -139,6 +151,8 @@ Future<bool> addDisciplineComplaint(Map<String, dynamic> data) async {
               var temp = docSnapshot.data();
               Timestamp time = docSnapshot.get('timestamp');
               temp['timestamp'] = time.toDate();
+              temp['complaintType'] = 'Discipline';
+              temp['id'] = docSnapshot.id;
               newComplaintList.add(temp);
             }
           }
@@ -148,6 +162,8 @@ Future<bool> addDisciplineComplaint(Map<String, dynamic> data) async {
               var temp = docSnapshot.data();
               Timestamp time = docSnapshot.get('timestamp');
               temp['timestamp'] = time.toDate();
+              temp['complaintType'] = 'Discipline';
+              temp['id'] = docSnapshot.id;
               newComplaintList.add(temp);
             }
         }

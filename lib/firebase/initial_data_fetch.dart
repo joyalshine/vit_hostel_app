@@ -19,16 +19,65 @@ const Map<int,int> monthDaysCount = {
 
 Future<Map<String,dynamic>> fetchUserComplaints(String email) async{
   try{
-    DocumentSnapshot doc = await db.collection('userData').doc(email).get();
-    if(doc.exists){
-      return {
+    List<dynamic> discipline = [];
+    List<dynamic> mess = [];
+    List<dynamic> maintenance = [];
+    List<dynamic> cleaning = [];
+    await db.collection('discipline').where('studentEmail',isEqualTo: email).get().then(
+      (querySnapshot) {
+          for (var docSnapshot in querySnapshot.docs) {
+              var temp = docSnapshot.data();
+              Timestamp time = docSnapshot.get('timestamp');
+              temp['timestamp'] = time.toDate();
+              temp['complaintType'] = 'Discipline';
+              temp['id'] = docSnapshot.id;
+              discipline.add(temp);
+          }
+      },
+    );
+    await db.collection('maintenance').where('studentEmail',isEqualTo: email).get().then(
+      (querySnapshot) {
+          for (var docSnapshot in querySnapshot.docs) {
+              var temp = docSnapshot.data();
+              Timestamp time = docSnapshot.get('timestamp');
+              temp['timestamp'] = time.toDate();
+              temp['complaintType'] = 'Maintenance';
+              temp['id'] = docSnapshot.id;
+              maintenance.add(temp);
+          }
+      },
+    );
+    await db.collection('cleaning').where('studentEmail',isEqualTo: email).get().then(
+      (querySnapshot) {
+          for (var docSnapshot in querySnapshot.docs) {
+              var temp = docSnapshot.data();
+              Timestamp time = docSnapshot.get('timestamp');
+              temp['timestamp'] = time.toDate();
+              temp['complaintType'] = 'Cleaning';
+              temp['id'] = docSnapshot.id;
+              cleaning.add(temp);
+          }
+      },
+    );
+    await db.collection('mess').where('studentEmail',isEqualTo: email).get().then(
+      (querySnapshot) {
+          for (var docSnapshot in querySnapshot.docs) {
+              var temp = docSnapshot.data();
+              Timestamp time = docSnapshot.get('timestamp');
+              temp['timestamp'] = time.toDate();
+              temp['complaintType'] = 'Mess';
+              temp['id'] = docSnapshot.id;
+              mess.add(temp);
+          }
+      },
+    );
+    return {
         'status' : true,
-        'data':doc.data()
+        'discipline': discipline,
+        'mess' :mess,
+        'maintenance' : maintenance,
+        'cleaning' : cleaning
       };
-    }
-    else{
-      return {'status' : false,'type' : null};
-    }
   }
   catch(err){
     return {'status' : false,'type' : 'error'};

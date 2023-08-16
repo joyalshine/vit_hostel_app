@@ -5,6 +5,7 @@ import 'package:vit_hostel_repo/pages/cleaning_complaint.dart';
 import 'package:vit_hostel_repo/pages/detail_mess.dart';
 import 'package:vit_hostel_repo/pages/discipline_complaint.dart';
 import 'package:vit_hostel_repo/pages/food_complaint.dart';
+import 'package:vit_hostel_repo/pages/profile_screen.dart';
 
 
 String getFormattedDate() {
@@ -132,11 +133,16 @@ class _ScreenHomeState extends State<ScreenHome> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 25),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.blue.withOpacity(0),
-                      backgroundImage:
-                          const AssetImage('assets/images/profile_avatar.png'),
-                      radius: 25,
+                    child: InkWell(
+                      onTap: (){
+                        Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => Profile()));
+                      },
+                      child: CircleAvatar(
+                        backgroundColor: Colors.blue.withOpacity(0),
+                        backgroundImage:
+                            const AssetImage('assets/images/profile_avatar.png'),
+                        radius: 25,
+                      ),
                     ),
                   ),
                 ],

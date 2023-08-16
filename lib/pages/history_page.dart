@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:vit_hostel_repo/pages/profile_screen.dart';
 import 'package:vit_hostel_repo/widgets/history_list.dart';
 
 class History extends StatefulWidget {
@@ -11,6 +13,30 @@ class History extends StatefulWidget {
 class _HistoryState extends State<History> {
   late double lastSwipe;
   int _currrentPage = 0;
+  bool isLoading = true;
+  List<dynamic> data = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchData();
+  }
+
+  void fetchData(){
+    Box complaints = Hive.box('complaints');
+    List<dynamic> messHistory = complaints.get('messHistory') ?? [];
+    List<dynamic> disciplineHistory = complaints.get('disciplineHistory') ?? [];
+    List<dynamic> maintenanceHistory = complaints.get('maintenanceHistory') ?? [];
+    List<dynamic> cleaningHistory = complaints.get('cleaningHistory') ?? [];
+    data.addAll(messHistory);
+    data.addAll(disciplineHistory);
+    data.addAll(maintenanceHistory);
+    data.addAll(cleaningHistory);
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +71,16 @@ class _HistoryState extends State<History> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 25),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.blue.withOpacity(0),
-                      backgroundImage:
-                          const AssetImage('assets/images/profile_avatar.png'),
-                      radius: 25,
+                    child: InkWell(
+                      onTap: (){
+                        Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => Profile()));
+                      },
+                      child: CircleAvatar(
+                        backgroundColor: Colors.blue.withOpacity(0),
+                        backgroundImage:
+                            const AssetImage('assets/images/profile_avatar.png'),
+                        radius: 25,
+                      ),
                     ),
                   ),
                 ],
@@ -121,8 +152,10 @@ class _HistoryState extends State<History> {
               const SizedBox(
                 height: 45,
               ),
-              HistoryList(
-                dataType: _currrentPage == 0 ? "pending" : "completed",
+              isLoading ? const Center(
+                child: CircularProgressIndicator(strokeWidth: 4,),
+              ) : HistoryList(
+                dataType: _currrentPage == 0 ? "pending" : "completed", data:data
               )
             ],
           ),

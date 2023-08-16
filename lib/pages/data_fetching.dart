@@ -28,20 +28,26 @@ class _DataFetchScreenState extends State<DataFetchScreen> {
     boxUserDetails.put('block', details['block']);
     boxUserDetails.put('room', details['room']);
     boxUserDetails.put('mess', details['mess']);
+    bool errors = false;
 
     final Box boxComplaints = Hive.box('complaints');
-    int countKey = 0;
     final Map<String,dynamic> complaintsResponse = await fetchUserComplaints(widget.userDetails['email']);
     if(complaintsResponse['status']){
-      final Map<String,dynamic> complaints = complaintsResponse['data'];
-      final data = complaints['complaints'];
-      if(data != null && data.isNotEmpty){
-        data.map((e){
-          boxComplaints.putAt(countKey, e);
-          countKey++;
-        });
-        boxComplaints.put('index', countKey); 
-      }
+      boxComplaints.put('cleaningHistory',complaintsResponse['cleaning']);
+      boxComplaints.put('messHistory',complaintsResponse['mess']);
+      boxComplaints.put('disciplineHistory',complaintsResponse['discipline']);
+      boxComplaints.put('maintenanceHistory',complaintsResponse['maintenance']);
+    }
+    else{
+      errors = true;
+      const snackBar = SnackBar(
+            behavior: SnackBarBehavior.floating,
+            margin:  EdgeInsets.only(bottom: 15,left: 5,right: 5),
+            backgroundColor: Color.fromARGB(255, 223, 57, 19),
+            content: Text('Some error occured!'),
+          );
+
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
 
 
@@ -52,8 +58,21 @@ class _DataFetchScreenState extends State<DataFetchScreen> {
       boxMenu.putAll(menuData); 
       boxMenu.put('month',menuFetchResponse['key']);
     }
+    else{
+      errors = true;
+      const snackBar = SnackBar(
+            behavior: SnackBarBehavior.floating,
+            margin:  EdgeInsets.only(bottom: 15,left: 5,right: 5),
+            backgroundColor: Color.fromARGB(255, 223, 57, 19),
+            content: Text('Some error occured!'),
+          );
 
-    Navigator.pushReplacement(context,MaterialPageRoute(builder: (ctx) => FadeTransitionContainer(screen: MainPage(newIndex: 0,))));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+
+    if(!errors){
+      Navigator.pushReplacement(context,MaterialPageRoute(builder: (ctx) => FadeTransitionContainer(screen: MainPage(newIndex: 0,))));
+    }
   }
 
   @override

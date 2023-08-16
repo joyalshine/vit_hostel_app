@@ -40,24 +40,26 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: <Color>[
-                const Color(0xffF7F8FA),
-                const Color(0xffDAE8F5).withOpacity(1),
-                const Color(0xffDAE8F5).withOpacity(1),
-                const Color(0xffDAE8F5).withOpacity(1),
-                const Color(0xffDBE9F6).withOpacity(1),
-              ],
-              tileMode: TileMode.mirror,
+      body: SafeArea(
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: <Color>[
+                  const Color(0xffF7F8FA),
+                  const Color(0xffDAE8F5).withOpacity(1),
+                  const Color(0xffDAE8F5).withOpacity(1),
+                  const Color(0xffDAE8F5).withOpacity(1),
+                  const Color(0xffDBE9F6).withOpacity(1),
+                ],
+                tileMode: TileMode.mirror,
+              ),
             ),
-          ),
-        child: screens[_currentIndex],
+          child: screens[_currentIndex],
+        ),
       ),
       extendBody: true,
       bottomNavigationBar: Container(

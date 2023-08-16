@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:vit_hostel_repo/firebase/complaint_add_functions.dart';
+import 'package:vit_hostel_repo/pages/profile_screen.dart';
 
 class DisciplineComplaint extends StatefulWidget {
   const DisciplineComplaint({super.key});
@@ -117,402 +118,414 @@ class _DisciplineComplaintState extends State<DisciplineComplaint> {
               tileMode: TileMode.mirror,
             ),
           ),
-          child: Stack(
-            children: [
-              Positioned(
-                top: 40,
-                left: 20,
-                right: 20,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Color(0xFFDDE0F6),
-                        borderRadius: BorderRadius.circular(10),
-                        shape: BoxShape.rectangle,
-                      ),
-                      child: Center(
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.arrow_back_outlined,
-                            color: Colors.black, // Arrow color
+          child: SafeArea(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 15.0,left: 15,top: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Color(0xFFDDE0F6),
+                          borderRadius: BorderRadius.circular(10),
+                          shape: BoxShape.rectangle,
+                        ),
+                        child: Center(
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.arrow_back_outlined,
+                              color: Colors.black, // Arrow color
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
                           ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
                         ),
                       ),
+                      Padding(
+                    padding: const EdgeInsets.only(right: 25),
+                    child: InkWell(
+                      onTap: (){
+                        Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => Profile()));
+                      },
+                      child: CircleAvatar(
+                        backgroundColor: Colors.blue.withOpacity(0),
+                        backgroundImage:
+                            const AssetImage('assets/images/profile_avatar.png'),
+                        radius: 25,
+                      ),
                     ),
-                    Image.asset(
-                      "assets/images/av.png",
-                      width: 60,
-                    ),
-                  ],
+                  ),
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                alignment: Alignment.topLeft,
-                padding: EdgeInsets.only(
-                  top: 125,
-                  left: 25,
-                  right: 35,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Discipline Complaint",
-                      style: TextStyle(
-                        fontSize: 25,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      "Block",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Color.fromARGB(255, 95, 168, 227),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Color(0xFFDDE0F6),
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color.fromARGB(255, 117, 116, 116),
-                            spreadRadius: 1,
-                            blurRadius: 8,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: TextFormField(
-                          controller: blockTextController,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      "Room No",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: const Color.fromARGB(255, 95, 168, 227),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Color(0xFFDDE0F6),
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color.fromARGB(255, 117, 116, 116),
-                            spreadRadius: 1,
-                            blurRadius: 5,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: TextFormField(
-                          controller: roomTextController,
-                          maxLines: 1,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      "Regarding",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: const Color.fromARGB(255, 119, 145, 216),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Smoking",
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.black,
-                          ),
-                        ),
-                        Checkbox(
-                          value: regarding[0],
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                          onChanged: (newValue) {
-                            clearRegardingCurrent();
-                            regardingSelected = 0;
-                            setState(() {
-                              regarding[0] = newValue!;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Use of Substance abuse",
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.black,
-                          ),
-                        ),
-                        Checkbox(
-                          value: regarding[1],
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                          onChanged: (newValue) {
-                            clearRegardingCurrent();
-                            regardingSelected = 1;
-                            setState(() {
-                              regarding[1] = newValue!;
-                            });
-                            if(regardingError){
-                              setState(() {
-                                regardingError = false;
-                              });
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Disturbance",
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.black,
-                          ),
-                        ),
-                        Checkbox(
-                          value: regarding[2],
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                          onChanged: (newValue) {
-                            clearRegardingCurrent();
-                            regardingSelected = 2;
-                            setState(() {
-                              regarding[2] = newValue!;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Alcohol",
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.black,
-                          ),
-                        ),
-                        Checkbox(
-                          value: regarding[3],
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                          onChanged: (newValue) {
-                            clearRegardingCurrent();
-                            regardingSelected = 3;
-                            setState(() {
-                              regarding[3] = newValue!;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Others",
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.black,
-                          ),
-                        ),
-                        Checkbox(
-                          value: regarding[4],
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                          onChanged: (newValue) {
-                            clearRegardingCurrent();
-                            regardingSelected = 4;
-                            setState(() {
-                              regarding[4] = newValue!;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    regardingError ? Text(
-                        'Please Select a type',
+                Container(
+                  alignment: Alignment.topLeft,
+                  padding: EdgeInsets.only(
+                    top: 35,
+                    left: 25,
+                    right: 35,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Discipline Complaint",
                         style: TextStyle(
-                          color: Colors.red
+                          fontSize: 25,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ) : 
-                      SizedBox(),
-                    SizedBox(height: 10), // Adjusted the spacing
-                    Text(
-                      "Complaint",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: const Color.fromARGB(255, 95, 168, 227),
-                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-
-                    SizedBox(height: 20),
-                    Container(
+                      SizedBox(height: 20),
+                      Text(
+                        "Block",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Color.fromARGB(255, 95, 168, 227),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          border: Border.all(color: complaintError ?  Colors.red : Colors.transparent,width: 1.3) ,
-                          color: Color.fromARGB(255, 239, 239, 255),
+                          color: Color(0xFFDDE0F6),
                           borderRadius: BorderRadius.circular(10),
-                          boxShadow: const [
+                          boxShadow: [
                             BoxShadow(
                               color: Color.fromARGB(255, 117, 116, 116),
                               spreadRadius: 1,
-                              blurRadius: 1,
-                              offset: Offset(0,2),
+                              blurRadius: 8,
+                              offset: Offset(0, 3),
                             ),
                           ],
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
-                          child: Form(
-                            child: TextFormField(
-                              controller: messageController,
-                              maxLines: 5,
-                              maxLength: 100,
-                              onChanged: (value){
-                                if(complaintError){
-                                  complaintError = false;
-                                }
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: TextFormField(
+                            readOnly: true,
+                            controller: blockTextController,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        "Room No",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: const Color.fromARGB(255, 95, 168, 227),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Color(0xFFDDE0F6),
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color.fromARGB(255, 117, 116, 116),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: TextFormField(
+                            readOnly: true,
+                            controller: roomTextController,
+                            maxLines: 1,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        "Regarding",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: const Color.fromARGB(255, 119, 145, 216),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Smoking",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Checkbox(
+                            value: regarding[0],
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                            onChanged: (newValue) {
+                              clearRegardingCurrent();
+                              regardingSelected = 0;
+                              setState(() {
+                                regarding[0] = newValue!;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Use of Substance abuse",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Checkbox(
+                            value: regarding[1],
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                            onChanged: (newValue) {
+                              clearRegardingCurrent();
+                              regardingSelected = 1;
+                              setState(() {
+                                regarding[1] = newValue!;
+                              });
+                              if(regardingError){
                                 setState(() {
-                                  remainingCharacters = 100 - value.length;
+                                  regardingError = false;
                                 });
-                              },
-                              decoration: const InputDecoration(
-                                counterText: '',
-                                hintText: "Enter your complaint",
-                                border: InputBorder.none,
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Disturbance",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Checkbox(
+                            value: regarding[2],
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                            onChanged: (newValue) {
+                              clearRegardingCurrent();
+                              regardingSelected = 2;
+                              setState(() {
+                                regarding[2] = newValue!;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Alcohol",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Checkbox(
+                            value: regarding[3],
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                            onChanged: (newValue) {
+                              clearRegardingCurrent();
+                              regardingSelected = 3;
+                              setState(() {
+                                regarding[3] = newValue!;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Others",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Checkbox(
+                            value: regarding[4],
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                            onChanged: (newValue) {
+                              clearRegardingCurrent();
+                              regardingSelected = 4;
+                              setState(() {
+                                regarding[4] = newValue!;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      regardingError ? Text(
+                          'Please Select a type',
+                          style: TextStyle(
+                            color: Colors.red
+                          ),
+                        ) : 
+                        SizedBox(),
+                      SizedBox(height: 10), // Adjusted the spacing
+                      Text(
+                        "Complaint",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: const Color.fromARGB(255, 95, 168, 227),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+          
+                      SizedBox(height: 20),
+                      Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: complaintError ?  Colors.red : Colors.transparent,width: 1.3) ,
+                            color: Color.fromARGB(255, 239, 239, 255),
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color.fromARGB(255, 117, 116, 116),
+                                spreadRadius: 1,
+                                blurRadius: 1,
+                                offset: Offset(0,2),
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
+                            child: Form(
+                              child: TextFormField(
+                                controller: messageController,
+                                maxLines: 5,
+                                maxLength: 100,
+                                onChanged: (value){
+                                  if(complaintError){
+                                    complaintError = false;
+                                  }
+                                  setState(() {
+                                    remainingCharacters = 100 - value.length;
+                                  });
+                                },
+                                decoration: const InputDecoration(
+                                  counterText: '',
+                                  hintText: "Enter your complaint",
+                                  border: InputBorder.none,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 10), // Add spacing
-                      Align(
-                        alignment: complaintError ? Alignment.bottomLeft : Alignment.bottomRight,
-                        child: complaintError ? const Text(
-                          "Please enter a message",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color:  Colors.red,
-                          ),
-                        ) :
-                         Text(
-                          "$remainingCharacters Characters left",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: remainingCharacters < 20 ? Colors.red :  Colors.grey,
-                          ),
-                        ),
-                      ),
-                    SizedBox(height: 20), // Adjusted the spacing
-
-                    Row(
-                      children: [
-                        Text(
-                          "Disclaimer: ",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.red,
-                          ),
-                        ),
-                        Text(
-                          "Your Identity will not be disclosed under any circumstances",
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(height: 20),
-                    Align(
-                        alignment: Alignment.center,
-                        child: ElevatedButton(
-                          onPressed: () async{
-                            if(await validateAndSave()){
-                                QuickAlert.show(
-                                  context: context,
-                                  type: QuickAlertType.success,
-                                  text: 'Request submitted Successfully!',
-                                );
-                                FocusManager.instance.primaryFocus?.unfocus();
-                            } 
-                            else{
-                              const snackBar = SnackBar(
-                                behavior: SnackBarBehavior.floating,
-                                margin:  EdgeInsets.only(bottom: 15,left: 5,right: 5),
-                                backgroundColor: Color.fromARGB(255, 223, 57, 19),
-                                content: Text('Some error ocurred'),
-                              );
-                              ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            primary: Color.fromARGB(255, 2, 109, 197),
-                            onPrimary: Colors.white,
-                            padding: EdgeInsets.symmetric(vertical: 15 ),
-                            fixedSize: Size.fromWidth(deviceWidth * 0.5),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: _isLoading ? Center(
-                            child: CircularProgressIndicator(strokeWidth: 3,),
-                          ) : 
-                          Text(
-                            "Submit",
+                        const SizedBox(height: 10), // Add spacing
+                        Align(
+                          alignment: complaintError ? Alignment.bottomLeft : Alignment.bottomRight,
+                          child: complaintError ? const Text(
+                            "Please enter a message",
                             style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              color:  Colors.red,
+                            ),
+                          ) :
+                           Text(
+                            "$remainingCharacters Characters left",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: remainingCharacters < 20 ? Colors.red :  Colors.grey,
                             ),
                           ),
                         ),
+                      SizedBox(height: 20), // Adjusted the spacing
+          
+                      Row(
+                        children: [
+                          Text(
+                            "Disclaimer: ",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.red,
+                            ),
+                          ),
+                          Text(
+                            "Your Identity will not be disclosed under any circumstances",
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
                       ),
-                  ],
+          
+                      SizedBox(height: 20),
+                      Align(
+                          alignment: Alignment.center,
+                          child: ElevatedButton(
+                            onPressed: () async{
+                              if(await validateAndSave()){
+                                  QuickAlert.show(
+                                    context: context,
+                                    type: QuickAlertType.success,
+                                    text: 'Request submitted Successfully!',
+                                  );
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                              } 
+                              else{
+                                const snackBar = SnackBar(
+                                  behavior: SnackBarBehavior.floating,
+                                  margin:  EdgeInsets.only(bottom: 15,left: 5,right: 5),
+                                  backgroundColor: Color.fromARGB(255, 223, 57, 19),
+                                  content: Text('Some error ocurred'),
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: Color.fromARGB(255, 2, 109, 197),
+                              onPrimary: Colors.white,
+                              padding: EdgeInsets.symmetric(vertical: 15 ),
+                              fixedSize: Size.fromWidth(deviceWidth * 0.5),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: _isLoading ? Center(
+                              child: CircularProgressIndicator(strokeWidth: 3,),
+                            ) : 
+                            Text(
+                              "Submit",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

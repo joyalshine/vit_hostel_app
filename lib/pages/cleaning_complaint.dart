@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:quickalert/quickalert.dart';
+import 'package:vit_hostel_repo/pages/profile_screen.dart';
 
 import '../firebase/complaint_add_functions.dart';
 
@@ -139,14 +140,12 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
               ),
             ),
         child: SingleChildScrollView(
-          child: SizedBox(
+          child: SafeArea(
             
-            child: Stack(
+            child: Column(
               children: [
-                Positioned(
-                  top: 40,
-                  left: 20,
-                  right: 20,
+                Padding(
+                  padding: const EdgeInsets.only(right: 15.0,left: 15,top: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -158,7 +157,7 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
                         ),
                         child: Center(
                           child: IconButton(
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.arrow_back_outlined,
                               color: Colors.black, // Arrow color
                             ),
@@ -169,7 +168,11 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
                         ),
                       ),
                       Padding(
-                      padding: const EdgeInsets.only(right: 25),
+                    padding: const EdgeInsets.only(right: 25),
+                    child: InkWell(
+                      onTap: (){
+                        Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => Profile()));
+                      },
                       child: CircleAvatar(
                         backgroundColor: Colors.blue.withOpacity(0),
                         backgroundImage:
@@ -177,13 +180,14 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
                         radius: 25,
                       ),
                     ),
+                  ),
                     ],
                   ),
                 ),
                 Container(
                   alignment: Alignment.topLeft,
                   padding: const EdgeInsets.only(
-                    top: 125,
+                    top: 35,
                     left: 25,
                     right: 35,
                   ),
