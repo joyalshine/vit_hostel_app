@@ -18,6 +18,9 @@ Future<Map<String,dynamic>> validateUser(String email) async{
     }
   }
   catch(err){
+    print('************************************');
+    print('error occured try');
+    print(err);
     return {'isValid':false,'type':'someError'};
   }
 }

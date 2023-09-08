@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:vit_hostel_repo/pages/detail_mess.dart';
 import 'package:vit_hostel_repo/pages/history_page.dart';
 import 'package:vit_hostel_repo/pages/home_page.dart';
-import 'package:vit_hostel_repo/pages/notification_manager.dart';
 import 'package:vit_hostel_repo/pages/settings_page.dart';
-import 'package:vit_hostel_repo/pages/cleaning_complaint.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key, required this.newIndex });
@@ -24,7 +21,6 @@ class _MainPageState extends State<MainPage> {
     _currentIndex = widget.newIndex;
     screens = [
       const ScreenHome(),
-      const NotificationManager(),
       const History(),
       const Settings(),
     ];
@@ -71,22 +67,16 @@ class _MainPageState extends State<MainPage> {
                 bottomRight: Radius.circular(0)),
             color: Colors.white),
         child: Padding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.symmetric(vertical:10,horizontal: 30),
           child: GNav(
             tabBackgroundColor: const Color.fromARGB(31, 84, 81, 214),
             activeColor: const Color.fromARGB(255, 84, 81, 214),
             padding: const EdgeInsets.all(12),
-            gap: 6,
+            gap: 10,
             tabs: const [
               GButton(
                 icon: Icons.home_rounded,
                 text: "Home",
-                iconColor: Color.fromARGB(255, 84, 81, 214),
-                textColor: Color.fromARGB(255, 84, 81, 214),
-              ),
-              GButton(
-                icon: Icons.notifications,
-                text: "Notifications",
                 iconColor: Color.fromARGB(255, 84, 81, 214),
                 textColor: Color.fromARGB(255, 84, 81, 214),
               ),

@@ -21,13 +21,18 @@ class _SplashScreenState extends State<SplashScreen> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     bool? loggedIn = prefs.getBool('loggedIn');
     if(loggedIn == null || loggedIn == false){
-      Navigator.pushReplacement(context,MaterialPageRoute(builder: (ctx) => LoginPage()));
+      Navigator.pushReplacement(context,MaterialPageRoute(builder: (ctx) => LoginPage(showError: false,)));
     }
     else{
       List<String> months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       final date = DateTime.now();
       String key = months[date.month - 1] + date.year.toString();
       Box menuBox = Hive.box('messMenu');
+      Box complaintBox = Hive.box('complaints');
+      final bool maintenancePending = complaintBox.get('maintenancePending') ?? false;
+      final bool messPending = complaintBox.get('messPending') ?? false;
+      final bool disciplinePending = complaintBox.get('disciplinePending') ?? false;
+      final bool cleaningPending = complaintBox.get('cleaningPending') ?? false;
       var currHiveMonth = menuBox.get('month');
       if(currHiveMonth == null || currHiveMonth == '' || currHiveMonth != key){
         final Map<String,dynamic> menuFetchResponse = await fetchCurrentMenu();
@@ -36,6 +41,22 @@ class _SplashScreenState extends State<SplashScreen> {
             await menuBox.putAll(menuData); 
             menuBox.put('month',menuFetchResponse['key']);
           }
+      }
+      if(maintenancePending){
+        print('Maintenance pending------------------');
+        await updateMaintenancePending();
+      }
+      if(messPending){
+        print('Mess pending------------------');
+        await updateMessPending();
+      }
+      if(disciplinePending){
+        print('Discipline pending------------------');
+        await updateDisciplinePending();
+      }
+      if(cleaningPending){
+        print('Cleaning pending------------------');
+        await updateCleaningPending();
       }
       Navigator.pushReplacement(context,MaterialPageRoute(builder: (ctx) => FadeTransitionContainer(screen: MainPage(newIndex: 0,))));
     }
@@ -86,9 +107,9 @@ class _SplashScreenState extends State<SplashScreen> {
                 color: Color.fromARGB(255, 0, 99, 181),
               ),),
               SizedBox(height: deviceHeight * 0.4,),
-              const SpinKitFadingCube(
+              const SpinKitFadingCircle(
                 color: Color.fromARGB(255, 48, 192, 232),
-                size: 50.0,
+                size: 60.0,
               )
             ],
           ))

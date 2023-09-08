@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:vit_hostel_repo/firebase/firebase_notifications.dart';
 import 'package:vit_hostel_repo/pages/splash_screen.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:flutter/services.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +25,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     precacheImage(const AssetImage("assets/images/VIT_Logo.png"), context);
+    SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
     return  const MaterialApp(
       home: SplashScreen(),
       );

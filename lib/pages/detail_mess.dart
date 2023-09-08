@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:vit_hostel_repo/firebase/data_assets.dart';
 import 'package:vit_hostel_repo/firebase/initial_data_fetch.dart';
 import 'package:vit_hostel_repo/pages/profile_screen.dart';
 
@@ -55,6 +56,10 @@ class _DetailMessMenuState extends State<DetailMessMenu>
         }
         details.add(temp);
       }
+    }
+    else{
+      noOfDays=0;
+
     }
   }
 
@@ -127,10 +132,10 @@ class _DetailMessMenuState extends State<DetailMessMenu>
                   Container(
                     margin: const EdgeInsets.only(top: 20),
                     width: double.infinity,
-                    child: const Text(
-                      'April',
+                    child: Text(
+                      MONTHS[DateTime.now().month - 1],
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 30,
                         color: Color(0xff1C305E),
                         fontWeight: FontWeight.w900,
@@ -207,7 +212,7 @@ class _DetailMessMenuState extends State<DetailMessMenu>
                   const SizedBox(
                     height: 20,
                   ),
-                  SizedBox(
+                  noOfDays != 0 ? SizedBox(
                       width: double.infinity,
                       height: 680,
                       child: TabBarView(
@@ -476,7 +481,23 @@ class _DetailMessMenuState extends State<DetailMessMenu>
                             ); 
                           })
                         ],
-                      )),
+                      )) : 
+                      SizedBox(
+                        width: double.infinity,
+                      height: 680,
+                        child: const Column(
+                              children: [
+                                SizedBox(height: 50,),
+                                Icon(
+                                  Icons.error_outline,
+                                  size: 35,
+                                  color: Colors.blue,
+                                ),
+                                SizedBox(height: 10,),
+                                Text('No data available',style: TextStyle(color: Colors.blue, fontSize: 19),)
+                              ],
+                            )
+                      ),
                 ],
               ),
             ),
