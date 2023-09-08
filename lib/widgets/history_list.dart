@@ -40,7 +40,8 @@ class _HistoryListState extends State<HistoryList> {
         }
         return false;
       }).toList();
-      newData.sort((a, b) => (b["resolveTime"] ?? b["denyTime"]).compareTo(a["resolveTime"] ?? a["denyTime"]));
+      newData.sort((a, b) => (b["resolveTime"] ?? b["denyTime"])
+          .compareTo(a["resolveTime"] ?? a["denyTime"]));
     } else {
       newData = widget.data.where((element) {
         if (element['status'] == '' || element['status'] == 'pending') {
@@ -98,7 +99,8 @@ class _HistoryListState extends State<HistoryList> {
                   int? resolvedDay, resolvedYear, resolvedHour, resolvedMinutes;
                   String? resolvedMonth;
                   if (widget.dataType == 'completed') {
-                    DateTime completed = item['resolveTime'] ?? item['denyTime'];
+                    DateTime completed =
+                        item['resolveTime'] ?? item['denyTime'];
                     resolvedDay = completed.day;
                     resolvedMonth = months[completed.month - 1];
                     resolvedYear = completed.year;
@@ -109,7 +111,10 @@ class _HistoryListState extends State<HistoryList> {
                   return Container(
                     margin: EdgeInsets.only(bottom: 15),
                     decoration: BoxDecoration(
-                      color: item['status'] == 'resolve' || item['status'] == 'pending' ? Color.fromARGB(255, 94, 92, 227) : Color.fromARGB(255, 231, 51, 19),
+                      color: item['status'] == 'resolve' ||
+                              item['status'] == 'pending'
+                          ? Color.fromARGB(255, 94, 92, 227)
+                          : Color.fromARGB(255, 231, 51, 19),
                       borderRadius: BorderRadius.circular(13),
                       boxShadow: const [
                         BoxShadow(
@@ -320,29 +325,27 @@ class _HistoryListState extends State<HistoryList> {
                           SizedBox(
                             height: 13,
                           ),
-                          item['complaintType'] != 'Mess'
-                              ? Row(
-                                  children: [
-                                    Text(
-                                      item['complaintType'] != 'Maintenance' ||
-                                              item['complaintType'] ==
-                                                  'Cleaning'
-                                          ? 'For : '
-                                          : 'Regarding : ',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    Text(
-                                      item['complaintType'] == 'Discipline'
-                                          ? discipline[category]!
-                                          : categoryDisplay(
-                                              category, item['complaintType']),
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500),
-                                    )
-                                  ],
+                          if (item['complaintType'] != 'Mess')
+                            Row(
+                              children: [
+                                Text(
+                                  item['complaintType'] != 'Maintenance' ||
+                                          item['complaintType'] == 'Cleaning'
+                                      ? 'For : '
+                                      : 'Regarding : ',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                Text(
+                                  item['complaintType'] == 'Discipline'
+                                      ? discipline[category]!
+                                      : categoryDisplay(
+                                          category, item['complaintType']),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500),
                                 )
-                              : SizedBox(),
+                              ],
+                            ),
                           SizedBox(
                             height: 15,
                           ),
@@ -359,7 +362,28 @@ class _HistoryListState extends State<HistoryList> {
                           Text(
                             item['complaint'],
                             style: TextStyle(color: Colors.white),
-                          )
+                          ),
+                          if (item['status'] == 'deny')
+                            const SizedBox(
+                              height: 15,
+                            ),
+                          if (item['status'] == 'deny')
+                            const Text(
+                              'Feedback',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                textBaseline: TextBaseline.alphabetic,
+                              ),
+                            ),
+                          if (item['status'] == 'deny')
+                            const SizedBox(
+                              height: 8,
+                            ),
+                          if (item['status'] == 'deny')
+                            Text(
+                              item['feedback'],
+                              style: TextStyle(color: Colors.white),
+                            )
                         ],
                       ),
                     ),
