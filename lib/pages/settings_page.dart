@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vit_hostel_repo/firebase/firebase_notifications.dart';
 import 'package:vit_hostel_repo/pages/fade_transition.dart';
 import 'package:vit_hostel_repo/pages/login_page.dart';
+
 class Settings extends StatefulWidget {
   const Settings({super.key});
 
@@ -11,22 +13,86 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  bool notificationValue = true;
+  bool notificationAccess = true;
   bool _isLoading = false;
+  bool _notificationLoading = false;
+  final Box boxUserDetails = Hive.box('userDetails');
 
-  void logout() async{
+  void notificationPermission() {
+    bool status = boxUserDetails.get('notificationStatus') ?? false;
+    setState(() {
+      notificationAccess = status;
+    });
+  }
+
+  void turnOffNotification() async {
+    String email = boxUserDetails.get('email');
+    bool response = await turnOffFCMDatabase(email: email);
+    if (response) {
+      setState(() {
+        notificationAccess = false;
+      });
+    } else {
+      const snackBar = SnackBar(
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(bottom: 15, left: 5, right: 5),
+        backgroundColor: Color.fromARGB(255, 223, 57, 19),
+        duration: Duration(seconds: 10),
+        content: Text('Some error occured'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+    setState(() {
+      _notificationLoading = false;
+    });
+  }
+
+  void turnOnNotification() async {
+    String email = boxUserDetails.get('email');
+    bool response = await FirebaseNotifications().initNotifications(email);
+    if (response) {
+      setState(() {
+        notificationAccess = true;
+      });
+    } else {
+      const snackBar = SnackBar(
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(bottom: 15, left: 5, right: 5),
+        backgroundColor: Color.fromARGB(255, 223, 57, 19),
+        duration: Duration(seconds: 10),
+        content: Text('Some error occured'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+    setState(() {
+      _notificationLoading = false;
+    });
+  }
+
+  void logout() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('loggedIn',false);
+    await prefs.setBool('loggedIn', false);
     await Hive.box('userDetails').clear();
     await Hive.box('messMenu').clear();
     await Hive.box('complaints').clear();
-    Navigator.pushReplacement(context,MaterialPageRoute(builder: (ctx) => FadeTransitionContainer(screen: const LoginPage())));
-  } 
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (ctx) => FadeTransitionContainer(
+                    screen: const LoginPage(
+                  showError: false,
+                ))));
+  }
+
+  @override
+  void initState() {
+    notificationPermission();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      
       child: Padding(
         padding: const EdgeInsets.all(15),
         child: ListView(
@@ -44,9 +110,16 @@ class _SettingsState extends State<Settings> {
                   child: const Icon(Icons.arrow_back),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(right: 25),
-                  child: ElevatedButton(onPressed: _isLoading? null : logout, child: _isLoading? const Center(child: CircularProgressIndicator(strokeWidth: 3,),) : const Text('Logout'))
-                ),
+                    padding: const EdgeInsets.only(right: 25),
+                    child: ElevatedButton(
+                        onPressed: _isLoading ? null : logout,
+                        child: _isLoading
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 3,
+                                ),
+                              )
+                            : const Text('Logout'))),
               ],
             ),
             Container(
@@ -86,70 +159,36 @@ class _SettingsState extends State<Settings> {
                   'Allow Notifications',
                   style: TextStyle(fontSize: 16),
                 ),
-                Switch(
-                  value: notificationValue,
-                  onChanged: (value) {
-                    setState(() {
-                      notificationValue = value;
-                    });
-                  },
-                )
+                _notificationLoading
+                    ? const SizedBox(
+                        width: 47,
+                        height: 47,
+                        child: Padding(
+                          padding: EdgeInsets.all(9.0),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Switch(
+                        value: notificationAccess,
+                        onChanged: (value) {
+                          setState(() {
+                            _notificationLoading = true;
+                          });
+                          if (value) {
+                            turnOnNotification();
+                          } else {
+                            turnOffNotification();
+                          }
+                        },
+                      )
               ],
             ),
             const SizedBox(
               height: 20,
-            ),
-            const Text(
-              "Edit Profile",
-              style: TextStyle(
-                fontSize: 20,
-                color: Color(0xff1C305E),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const Divider(
-              color: Color.fromARGB(255, 119, 145, 216),
-              thickness: 1.2,
-            ),
-            const SizedBox(
-              height: 6,
-            ),
-            const Text(
-              'arnab.ghsoh2021@vitstudent.ac.in',
-              style: TextStyle(fontSize: 16),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Q-1249 Vajpayee Block',
-                  style: TextStyle(fontSize: 16),
-                ),
-                IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.edit,
-                      color: Color.fromARGB(255, 84, 81, 214),
-                    ))
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Speical Mess - Bubby & Bit',
-                  style: TextStyle(fontSize: 16),
-                ),
-                IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.edit,
-                      color: Color.fromARGB(255, 84, 81, 214),
-                    ))
-              ],
-            ),
-            const SizedBox(
-              height: 15,
             ),
             const Text(
               "Developers",

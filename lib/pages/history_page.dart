@@ -29,10 +29,14 @@ class _HistoryState extends State<History> {
     List<dynamic> disciplineHistory = complaints.get('disciplineHistory') ?? [];
     List<dynamic> maintenanceHistory = complaints.get('maintenanceHistory') ?? [];
     List<dynamic> cleaningHistory = complaints.get('cleaningHistory') ?? [];
-    data.addAll(messHistory);
-    data.addAll(disciplineHistory);
-    data.addAll(maintenanceHistory);
-    data.addAll(cleaningHistory);
+    var fetchedData = [];
+    fetchedData.addAll(messHistory);
+    fetchedData.addAll(disciplineHistory);
+    fetchedData.addAll(maintenanceHistory);
+    fetchedData.addAll(cleaningHistory);
+    setState(() {
+      data = fetchedData;
+    });
     setState(() {
       isLoading = false;
     });
@@ -154,8 +158,10 @@ class _HistoryState extends State<History> {
               ),
               isLoading ? const Center(
                 child: CircularProgressIndicator(strokeWidth: 4,),
+              ) : _currrentPage == 0 ? HistoryList(
+                dataType: "pending" , data:data
               ) : HistoryList(
-                dataType: _currrentPage == 0 ? "pending" : "completed", data:data
+                dataType:  "completed", data:data
               )
             ],
           ),

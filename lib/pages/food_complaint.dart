@@ -28,7 +28,7 @@ class _FoodComplaintState extends State<FoodComplaint> {
   bool _isLoading = false;
   int remainingCharacters = 100;
 
-  Future<bool> validateAndSave() async{
+  Future<Map<String, dynamic>> validateAndSave() async{
     setState(() {
       _isLoading = true;
     });
@@ -40,21 +40,26 @@ class _FoodComplaintState extends State<FoodComplaint> {
       setState(() {
         _isLoading = false;
       });
-      return false;
+      return {'status': false, 'type': 'incdata'};
     }
     else{
       String email = userBox.get('email');
+      String name = userBox.get('name');
+      String regno = userBox.get('regno');
       Map<String,dynamic> dataToUpload = {
         'mess' : messController.text,
+        'name' : name,
+        'regno' : regno,
+        'status' : 'pending',
         'studentEmail' : email,
         'timestamp' : FieldValue.serverTimestamp(),
         'complaint' : message
       };
-      bool response  = await addMessComplaint(dataToUpload);
+      Map<String, dynamic> response  = await addMessComplaint(dataToUpload);
       setState(() {
         _isLoading = false;
       }); 
-      if(response){
+      if(response['status']){
         setState(() {
           remainingCharacters = 100;
         });
@@ -253,23 +258,40 @@ class _FoodComplaintState extends State<FoodComplaint> {
                             alignment: Alignment.center,
                             child: ElevatedButton(
                               onPressed: () async{
-                                if(await validateAndSave()){
-                                    QuickAlert.show(
-                                      context: context,
-                                      type: QuickAlertType.success,
-                                      text: 'Request submitted Successfully!',
-                                    );
-                                    FocusManager.instance.primaryFocus?.unfocus();
-                                } 
-                                else{
-                                  const snackBar = SnackBar(
-                                    behavior: SnackBarBehavior.floating,
-                                    margin:  EdgeInsets.only(bottom: 15,left: 5,right: 5),
-                                    backgroundColor: Color.fromARGB(255, 223, 57, 19),
-                                    content: Text('Some error ocurred'),
-                                  );
-                                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                }
+                                var response = await validateAndSave();
+                            if (response['status']) {
+                              QuickAlert.show(
+                                context: context,
+                                type: QuickAlertType.success,
+                                text: 'Request submitted Successfully!',
+                              );
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            } else {
+                              if (response['type'] == 'someerr') {
+                                const snackBar = SnackBar(
+                                  behavior: SnackBarBehavior.floating,
+                                  margin: EdgeInsets.only(
+                                      bottom: 15, left: 5, right: 5),
+                                  backgroundColor:
+                                      Color.fromARGB(255, 223, 57, 19),
+                                  content: Text('Some error ocurred'),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              } else if (response['type'] == 'noconn') {
+                                showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (_) => NetworkErrorDialog(),
+                                );
+                              }else if (response['type'] == 'pendingexist') {
+                                QuickAlert.show(
+                                context: context,
+                                type: QuickAlertType.info,
+                                text: 'A Request already exists!',
+                              );
+                              } else {}
+                            }
                               },
                               style: ElevatedButton.styleFrom(
                                 primary: Color.fromARGB(255, 2, 109, 197),
@@ -299,5 +321,50 @@ class _FoodComplaintState extends State<FoodComplaint> {
         ),
       ),
     ));
+  }
+}
+
+
+class NetworkErrorDialog extends StatelessWidget {
+  const NetworkErrorDialog({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      content: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+              width: 200, child: Image.asset('assets/images/no_internet.webp')),
+          const SizedBox(height: 32),
+          const Text(
+            "Whoops!",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            "No internet connection found.",
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            "Check your connection and try again.",
+            style: TextStyle(fontSize: 12),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            child: const Text("Ok"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          )
+        ],
+      ),
+    );
   }
 }

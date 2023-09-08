@@ -57,19 +57,19 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
     }
   }
 
- Future<bool> validateAndSave() async{
+ Future<Map<String, dynamic>> validateAndSave() async{
     setState(() {
       _isLoading = true;
     });
     String message = messageController.text;
     List<String> cleaningOf = [];
     bool errors = false;
-    if(roomIsChecked) cleaningOf.add('room');
-    if(generalsChecked) cleaningOf.add('general');
-    if(purifierAreaIsChecked) cleaningOf.add('purifier');
-    if(westernToiletIsChecked) cleaningOf.add('western');
-    if(indianToiletIsChecked) cleaningOf.add('indian');
-    if(bathroomsIsChecked) cleaningOf.add('bathroom');
+    if(roomIsChecked) cleaningOf.add('rm');
+    if(generalsChecked) cleaningOf.add('gn');
+    if(purifierAreaIsChecked) cleaningOf.add('pa');
+    if(westernToiletIsChecked) cleaningOf.add('wt');
+    if(indianToiletIsChecked) cleaningOf.add('it');
+    if(bathroomsIsChecked) cleaningOf.add('bt');
     if(cleaningOf.isEmpty){
       errors = true;
       setState(() {
@@ -84,19 +84,24 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
     }
     if(!errors){
       String email = userBox.get('email');
+      String name = userBox.get('name');
+      String regno = userBox.get('regno');
       Map<String,dynamic> dataToUpload = {
         'block' : blockTextController.text,
         'room' : roomTextController.text,
+        'name' : name,
+        'regno' : regno,
+        'status' : 'pending',
         'studentEmail' : email,
         'timestamp' : FieldValue.serverTimestamp(),
         'category' : cleaningOf,
         'complaint' : message
       };
-      bool response  = await addCleaningRequest(dataToUpload);
+      Map<String, dynamic> response  = await addCleaningRequest(dataToUpload);
       setState(() {
         _isLoading = false;
       }); 
-      if(response){
+      if(response['status']){
         if(roomIsChecked) setState(() => roomIsChecked = false);
         if(generalsChecked) setState(() => generalsChecked = false);
         if(purifierAreaIsChecked) setState(() => purifierAreaIsChecked = false);
@@ -108,13 +113,14 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
         });
         messageController.clear();
       }
+      else{}
       return response;
     }
     else{
       setState(() {
         _isLoading = false;
       });
-      return false;
+      return {'status': false, 'type': 'incdata'};
     }
   }
 
@@ -521,7 +527,8 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
                         alignment: Alignment.center,
                         child: ElevatedButton(
                           onPressed: () async{
-                            if(await validateAndSave()){
+                            var response = await validateAndSave();
+                            if(response['status']){
                                 QuickAlert.show(
                                   context: context,
                                   type: QuickAlertType.success,
@@ -530,13 +537,30 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
                                 FocusManager.instance.primaryFocus?.unfocus();
                             } 
                             else{
-                              const snackBar = SnackBar(
-                                behavior: SnackBarBehavior.floating,
-                                margin:  EdgeInsets.only(bottom: 15,left: 5,right: 5),
-                                backgroundColor: Color.fromARGB(255, 223, 57, 19),
-                                content: Text('Some error ocurred'),
+                              if (response['type'] == 'someerr') {
+                                const snackBar = SnackBar(
+                                  behavior: SnackBarBehavior.floating,
+                                  margin: EdgeInsets.only(
+                                      bottom: 15, left: 5, right: 5),
+                                  backgroundColor:
+                                      Color.fromARGB(255, 223, 57, 19),
+                                  content: Text('Some error ocurred'),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              } else if (response['type'] == 'noconn') {
+                                showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (_) => NetworkErrorDialog(),
+                                );
+                              }else if (response['type'] == 'pendingexist') {
+                                QuickAlert.show(
+                                context: context,
+                                type: QuickAlertType.info,
+                                text: 'A Request already exists!',
                               );
-                              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                              } else {}
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -567,6 +591,50 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class NetworkErrorDialog extends StatelessWidget {
+  const NetworkErrorDialog({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      content: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+              width: 200, child: Image.asset('assets/images/no_internet.webp')),
+          const SizedBox(height: 32),
+          const Text(
+            "Whoops!",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            "No internet connection found.",
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            "Check your connection and try again.",
+            style: TextStyle(fontSize: 12),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            child: const Text("Ok"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          )
+        ],
       ),
     );
   }

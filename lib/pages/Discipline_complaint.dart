@@ -26,7 +26,7 @@ class _DisciplineComplaintState extends State<DisciplineComplaint> {
     roomTextController.text = userBox.get('room').toString();
   }
 
-  List<bool> regarding = [false,false,false,false,false];
+  List<bool> regarding = [false, false, false, false, false];
 
   bool complaintError = false;
   bool regardingError = false;
@@ -35,53 +35,64 @@ class _DisciplineComplaintState extends State<DisciplineComplaint> {
 
   int? regardingSelected;
 
-  void clearRegardingCurrent(){
-    if(regardingSelected != null){
+  void clearRegardingCurrent() {
+    if (regardingSelected != null) {
       setState(() {
         regarding[regardingSelected!] = false;
       });
     }
   }
 
-  Future<bool> validateAndSave() async{
+  Future<Map<String, dynamic>> validateAndSave() async {
     setState(() {
       _isLoading = true;
     });
     String message = messageController.text;
     String regardingData = '';
     bool errors = false;
-    if(regarding[0]){regardingData='smoking';} 
-    else if(regarding[1]){regardingData='substance';} 
-    else if(regarding[2]){regardingData='disturbance';} 
-    else if(regarding[3]){regardingData='alcohol';} 
-    else if(regarding[4]){regardingData='others';} 
-    else{
+    if (regarding[0]) {
+      regardingData = 'sm';
+    } else if (regarding[1]) {
+      regardingData = 'sa';
+    } else if (regarding[2]) {
+      regardingData = 'db';
+    } else if (regarding[3]) {
+      regardingData = 'al';
+    } else if (regarding[4]) {
+      regardingData = 'oth';
+    } else {
       errors = true;
       setState(() {
         regardingError = true;
       });
     }
-    if(message == '' || message == null){
+    if (message == '' || message == null) {
       errors = true;
       setState(() {
         complaintError = true;
       });
     }
-    if(!errors){
+    if (!errors) {
       String email = userBox.get('email');
-      Map<String,dynamic> dataToUpload = {
-        'block' : blockTextController.text,
-        'room' : roomTextController.text,
-        'studentEmail' : email,
-        'timestamp' : FieldValue.serverTimestamp(),
-        'category' : regardingData,
-        'complaint' : message
+      String name = userBox.get('name');
+      String regno = userBox.get('regno');
+      Map<String, dynamic> dataToUpload = {
+        'block': blockTextController.text,
+        'room': roomTextController.text,
+        'name': name,
+        'regno': regno,
+        'status': 'pending',
+        'studentEmail': email,
+        'timestamp': FieldValue.serverTimestamp(),
+        'category': regardingData,
+        'complaint': message
       };
-      bool response  = await addDisciplineComplaint(dataToUpload);
+      Map<String, dynamic> response =
+          await addDisciplineComplaint(dataToUpload);
       setState(() {
         _isLoading = false;
-      }); 
-      if(response){
+      });
+      if (response['status']) {
         setState(() {
           regarding[regardingSelected!] = false;
           remainingCharacters = 100;
@@ -89,14 +100,14 @@ class _DisciplineComplaintState extends State<DisciplineComplaint> {
         messageController.clear();
       }
       return response;
-    }
-    else{
+    } else {
       setState(() {
         _isLoading = false;
       });
-      return false;
+      return {'status': false, 'type': 'incdata'};
     }
   }
+
   @override
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
@@ -122,7 +133,8 @@ class _DisciplineComplaintState extends State<DisciplineComplaint> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 15.0,left: 15,top: 10),
+                  padding:
+                      const EdgeInsets.only(right: 15.0, left: 15, top: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -145,19 +157,20 @@ class _DisciplineComplaintState extends State<DisciplineComplaint> {
                         ),
                       ),
                       Padding(
-                    padding: const EdgeInsets.only(right: 25),
-                    child: InkWell(
-                      onTap: (){
-                        Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => Profile()));
-                      },
-                      child: CircleAvatar(
-                        backgroundColor: Colors.blue.withOpacity(0),
-                        backgroundImage:
-                            const AssetImage('assets/images/profile_avatar.png'),
-                        radius: 25,
+                        padding: const EdgeInsets.only(right: 25),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                                MaterialPageRoute(builder: (ctx) => Profile()));
+                          },
+                          child: CircleAvatar(
+                            backgroundColor: Colors.blue.withOpacity(0),
+                            backgroundImage: const AssetImage(
+                                'assets/images/profile_avatar.png'),
+                            radius: 25,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
                     ],
                   ),
                 ),
@@ -273,7 +286,8 @@ class _DisciplineComplaintState extends State<DisciplineComplaint> {
                           ),
                           Checkbox(
                             value: regarding[0],
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4)),
                             onChanged: (newValue) {
                               clearRegardingCurrent();
                               regardingSelected = 0;
@@ -296,14 +310,15 @@ class _DisciplineComplaintState extends State<DisciplineComplaint> {
                           ),
                           Checkbox(
                             value: regarding[1],
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4)),
                             onChanged: (newValue) {
                               clearRegardingCurrent();
                               regardingSelected = 1;
                               setState(() {
                                 regarding[1] = newValue!;
                               });
-                              if(regardingError){
+                              if (regardingError) {
                                 setState(() {
                                   regardingError = false;
                                 });
@@ -324,7 +339,8 @@ class _DisciplineComplaintState extends State<DisciplineComplaint> {
                           ),
                           Checkbox(
                             value: regarding[2],
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4)),
                             onChanged: (newValue) {
                               clearRegardingCurrent();
                               regardingSelected = 2;
@@ -347,7 +363,8 @@ class _DisciplineComplaintState extends State<DisciplineComplaint> {
                           ),
                           Checkbox(
                             value: regarding[3],
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4)),
                             onChanged: (newValue) {
                               clearRegardingCurrent();
                               regardingSelected = 3;
@@ -370,7 +387,8 @@ class _DisciplineComplaintState extends State<DisciplineComplaint> {
                           ),
                           Checkbox(
                             value: regarding[4],
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4)),
                             onChanged: (newValue) {
                               clearRegardingCurrent();
                               regardingSelected = 4;
@@ -381,13 +399,12 @@ class _DisciplineComplaintState extends State<DisciplineComplaint> {
                           ),
                         ],
                       ),
-                      regardingError ? Text(
-                          'Please Select a type',
-                          style: TextStyle(
-                            color: Colors.red
-                          ),
-                        ) : 
-                        SizedBox(),
+                      regardingError
+                          ? Text(
+                              'Please Select a type',
+                              style: TextStyle(color: Colors.red),
+                            )
+                          : SizedBox(),
                       SizedBox(height: 10), // Adjusted the spacing
                       Text(
                         "Complaint",
@@ -397,67 +414,77 @@ class _DisciplineComplaintState extends State<DisciplineComplaint> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-          
+
                       SizedBox(height: 20),
                       Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: complaintError ?  Colors.red : Colors.transparent,width: 1.3) ,
-                            color: Color.fromARGB(255, 239, 239, 255),
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color.fromARGB(255, 117, 116, 116),
-                                spreadRadius: 1,
-                                blurRadius: 1,
-                                offset: Offset(0,2),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: complaintError
+                                  ? Colors.red
+                                  : Colors.transparent,
+                              width: 1.3),
+                          color: Color.fromARGB(255, 239, 239, 255),
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color.fromARGB(255, 117, 116, 116),
+                              spreadRadius: 1,
+                              blurRadius: 1,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 5),
+                          child: Form(
+                            child: TextFormField(
+                              controller: messageController,
+                              maxLines: 5,
+                              maxLength: 100,
+                              onChanged: (value) {
+                                if (complaintError) {
+                                  complaintError = false;
+                                }
+                                setState(() {
+                                  remainingCharacters = 100 - value.length;
+                                });
+                              },
+                              decoration: const InputDecoration(
+                                counterText: '',
+                                hintText: "Enter your complaint",
+                                border: InputBorder.none,
                               ),
-                            ],
+                            ),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
-                            child: Form(
-                              child: TextFormField(
-                                controller: messageController,
-                                maxLines: 5,
-                                maxLength: 100,
-                                onChanged: (value){
-                                  if(complaintError){
-                                    complaintError = false;
-                                  }
-                                  setState(() {
-                                    remainingCharacters = 100 - value.length;
-                                  });
-                                },
-                                decoration: const InputDecoration(
-                                  counterText: '',
-                                  hintText: "Enter your complaint",
-                                  border: InputBorder.none,
+                        ),
+                      ),
+                      const SizedBox(height: 10), // Add spacing
+                      Align(
+                        alignment: complaintError
+                            ? Alignment.bottomLeft
+                            : Alignment.bottomRight,
+                        child: complaintError
+                            ? const Text(
+                                "Please enter a message",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.red,
+                                ),
+                              )
+                            : Text(
+                                "$remainingCharacters Characters left",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: remainingCharacters < 20
+                                      ? Colors.red
+                                      : Colors.grey,
                                 ),
                               ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 10), // Add spacing
-                        Align(
-                          alignment: complaintError ? Alignment.bottomLeft : Alignment.bottomRight,
-                          child: complaintError ? const Text(
-                            "Please enter a message",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color:  Colors.red,
-                            ),
-                          ) :
-                           Text(
-                            "$remainingCharacters Characters left",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: remainingCharacters < 20 ? Colors.red :  Colors.grey,
-                            ),
-                          ),
-                        ),
+                      ),
                       SizedBox(height: 20), // Adjusted the spacing
-          
+
                       Row(
                         children: [
                           Text(
@@ -476,51 +503,71 @@ class _DisciplineComplaintState extends State<DisciplineComplaint> {
                           ),
                         ],
                       ),
-          
+
                       SizedBox(height: 20),
                       Align(
-                          alignment: Alignment.center,
-                          child: ElevatedButton(
-                            onPressed: () async{
-                              if(await validateAndSave()){
-                                  QuickAlert.show(
-                                    context: context,
-                                    type: QuickAlertType.success,
-                                    text: 'Request submitted Successfully!',
-                                  );
-                                  FocusManager.instance.primaryFocus?.unfocus();
-                              } 
-                              else{
+                        alignment: Alignment.center,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            var response = await validateAndSave();
+                            if (response['status']) {
+                              QuickAlert.show(
+                                context: context,
+                                type: QuickAlertType.success,
+                                text: 'Request submitted Successfully!',
+                              );
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            } else {
+                              if (response['type'] == 'someerr') {
                                 const snackBar = SnackBar(
                                   behavior: SnackBarBehavior.floating,
-                                  margin:  EdgeInsets.only(bottom: 15,left: 5,right: 5),
-                                  backgroundColor: Color.fromARGB(255, 223, 57, 19),
+                                  margin: EdgeInsets.only(
+                                      bottom: 15, left: 5, right: 5),
+                                  backgroundColor:
+                                      Color.fromARGB(255, 223, 57, 19),
                                   content: Text('Some error ocurred'),
                                 );
-                                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: Color.fromARGB(255, 2, 109, 197),
-                              onPrimary: Colors.white,
-                              padding: EdgeInsets.symmetric(vertical: 15 ),
-                              fixedSize: Size.fromWidth(deviceWidth * 0.5),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: _isLoading ? Center(
-                              child: CircularProgressIndicator(strokeWidth: 3,),
-                            ) : 
-                            Text(
-                              "Submit",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              } else if (response['type'] == 'noconn') {
+                                showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (_) => NetworkErrorDialog(),
+                                );
+                              } else if (response['type'] == 'pendingexist') {
+                                QuickAlert.show(
+                                  context: context,
+                                  type: QuickAlertType.info,
+                                  text: 'A Request already exists!',
+                                );
+                              } else {}
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Color.fromARGB(255, 2, 109, 197),
+                            onPrimary: Colors.white,
+                            padding: EdgeInsets.symmetric(vertical: 15),
+                            fixedSize: Size.fromWidth(deviceWidth * 0.5),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
+                          child: _isLoading
+                              ? Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 3,
+                                  ),
+                                )
+                              : Text(
+                                  "Submit",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                         ),
+                      ),
                     ],
                   ),
                 ),
@@ -528,6 +575,50 @@ class _DisciplineComplaintState extends State<DisciplineComplaint> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class NetworkErrorDialog extends StatelessWidget {
+  const NetworkErrorDialog({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      content: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+              width: 200, child: Image.asset('assets/images/no_internet.webp')),
+          const SizedBox(height: 32),
+          const Text(
+            "Whoops!",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            "No internet connection found.",
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            "Check your connection and try again.",
+            style: TextStyle(fontSize: 12),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            child: const Text("Ok"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          )
+        ],
       ),
     );
   }

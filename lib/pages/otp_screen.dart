@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpScreen extends StatefulWidget {
   const OtpScreen(
@@ -41,10 +40,14 @@ class _OtpScreenState extends State<OtpScreen> {
           });
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
-    else if(enteredOTP !=  widget.otp.toString()){
+    else if(enteredOTP ==  widget.otp.toString()){
+      widget.nextScreen();
+      
+    }
+    else{
       const snackBar = SnackBar(
             behavior: SnackBarBehavior.floating,
-            margin:  EdgeInsets.only(bottom: 15,left: 5,right: 5),
+            margin:  EdgeInsets.only(bottom: 45,left: 25,right: 25),
             backgroundColor: Color.fromARGB(255, 69, 69, 83),
             content: Text('Invalid OTP!'),
           );
@@ -53,11 +56,6 @@ class _OtpScreenState extends State<OtpScreen> {
             _isLoading = false;
           });
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
-    else{
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('loggedIn',true);
-      widget.nextScreen();
     }
   }
 

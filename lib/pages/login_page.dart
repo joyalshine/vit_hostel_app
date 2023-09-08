@@ -6,7 +6,9 @@ import 'package:vit_hostel_repo/pages/otp_screen.dart';
 import 'package:vit_hostel_repo/pages/start_screen.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key,required this.showError});
+
+  final bool showError;
   @override
   State<LoginPage> createState() {
     return _LoginPageState();
@@ -18,6 +20,14 @@ class _LoginPageState extends State<LoginPage> {
   late int otpCode;
   late String userEmail;
   late Map<String,dynamic> userDetails;
+
+  @override
+  void initState() {
+    super.initState();
+    if(widget.showError){
+      activeScreen = 'email-screen';
+    }
+  }
 
   void otpScreen(int otp, String email,Map<String,dynamic> details) {
     setState(() {
@@ -55,6 +65,7 @@ class _LoginPageState extends State<LoginPage> {
     if (activeScreen == "email-screen") {
       screenWidget = EmailScreen(
         nextScreen: otpScreen,
+        showError: widget.showError,
       );
     }
     if (activeScreen == "otp-screen") {
