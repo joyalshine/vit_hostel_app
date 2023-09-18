@@ -218,15 +218,15 @@ class _ScreenHomeState extends State<ScreenHome> {
                                     fontWeight: FontWeight.w500),
                               )
                             : const SizedBox(),
-                        const SizedBox(
-                          height: 8,
+                        SizedBox(
+                          height: menu['type'] == '' ? 4 : 8,
                         ),
                         Text(menu['menu']!,
                             style: const TextStyle(
                               color: Color(0xffFFFFFF),
                             )),
                         const SizedBox(
-                          height: 4,
+                          height: 5,
                         ),
                         menuAvailable
                             ? Container(

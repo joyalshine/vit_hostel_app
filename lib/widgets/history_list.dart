@@ -114,7 +114,7 @@ class _HistoryListState extends State<HistoryList> {
                       color: item['status'] == 'resolve' ||
                               item['status'] == 'pending'
                           ? Color.fromARGB(255, 94, 92, 227)
-                          : Color.fromARGB(255, 231, 51, 19),
+                          : Color.fromARGB(255, 232, 75, 48),
                       borderRadius: BorderRadius.circular(13),
                       boxShadow: const [
                         BoxShadow(
@@ -394,21 +394,21 @@ class _HistoryListState extends State<HistoryList> {
                 ),
               ],
             )
-          : const Column(
+          : Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 50,
                 ),
-                Icon(
+                const Icon(
                   Icons.error_outline,
                   size: 35,
                   color: Colors.blue,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Text(
-                  'No Complaints available',
+                  widget.dataType == 'completed' ? 'No Complaints Resolved' : 'No Complaints Pending' ,
                   style: TextStyle(color: Colors.blue, fontSize: 19),
                 )
               ],

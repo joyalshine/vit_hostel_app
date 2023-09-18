@@ -73,33 +73,42 @@ class _DisciplineComplaintState extends State<DisciplineComplaint> {
       });
     }
     if (!errors) {
-      String email = userBox.get('email');
-      String name = userBox.get('name');
-      String regno = userBox.get('regno');
-      Map<String, dynamic> dataToUpload = {
-        'block': blockTextController.text,
-        'room': roomTextController.text,
-        'name': name,
-        'regno': regno,
-        'status': 'pending',
-        'studentEmail': email,
-        'timestamp': FieldValue.serverTimestamp(),
-        'category': regardingData,
-        'complaint': message
-      };
-      Map<String, dynamic> response =
-          await addDisciplineComplaint(dataToUpload);
-      setState(() {
-        _isLoading = false;
-      });
-      if (response['status']) {
+      Box complaintBox = Hive.box('complaints');
+      final isPending = complaintBox.get('disciplinePending') ?? false;
+      if (isPending) {
         setState(() {
-          regarding[regardingSelected!] = false;
-          remainingCharacters = 100;
+          _isLoading = false;
         });
-        messageController.clear();
+        return {'status': false, 'type': 'pendingexist'};
+      } else {
+        String email = userBox.get('email');
+        String name = userBox.get('name');
+        String regno = userBox.get('regno');
+        Map<String, dynamic> dataToUpload = {
+          'block': blockTextController.text,
+          'room': roomTextController.text,
+          'name': name,
+          'regno': regno,
+          'status': 'pending',
+          'studentEmail': email,
+          'timestamp': FieldValue.serverTimestamp(),
+          'category': regardingData,
+          'complaint': message
+        };
+        Map<String, dynamic> response =
+            await addDisciplineComplaint(dataToUpload);
+        setState(() {
+          _isLoading = false;
+        });
+        if (response['status']) {
+          setState(() {
+            regarding[regardingSelected!] = false;
+            remainingCharacters = 100;
+          });
+          messageController.clear();
+        }
+        return response;
       }
-      return response;
     } else {
       setState(() {
         _isLoading = false;
