@@ -29,8 +29,8 @@ Future<Map<String, dynamic>> addCleaningRequest(
       final newData = await db.collection('cleaning').add(data);
       String email = data['studentEmail'];
       Box complaintBox = Hive.box('complaints');
-      final bool isPending = complaintBox.get('cleaningPending') ?? false;
-      if (!isPending) {
+      // final bool isPending = complaintBox.get('cleaningPending') ?? false;
+      // if (!isPending) {
         List<dynamic> newComplaintList = [];
         List<dynamic> hiveOldData = complaintBox.get('cleaningHistory') ?? [];
         await db
@@ -68,9 +68,9 @@ Future<Map<String, dynamic>> addCleaningRequest(
         complaintBox.put('cleaningPending', true);
         complaintBox.put('cleanPendingId', newData.id);
         return {'status': true};
-      } else {
-        return {'status': false, 'type': 'pendingexist'};
-      }
+      // } else {
+      //   return {'status': false, 'type': 'pendingexist'};
+      // }
     } catch (error) {
       return {'status': false, 'type': 'someerr'};
     }
@@ -145,8 +145,8 @@ Future<Map<String, dynamic>> addMessComplaint(Map<String, dynamic> data) async {
       final newData = await db.collection('mess').add(data);
       String email = data['studentEmail'];
       Box complaintBox = Hive.box('complaints');
-      final isPending = complaintBox.get('messPending') ?? false;
-      if (!isPending) {
+      // final isPending = complaintBox.get('messPending') ?? false;
+      // if (!isPending) {
         List<dynamic> newComplaintList = [];
         List<dynamic> hiveOldData = complaintBox.get('messHistory') ?? [];
         await db
@@ -184,9 +184,9 @@ Future<Map<String, dynamic>> addMessComplaint(Map<String, dynamic> data) async {
         complaintBox.put('messPending', true);
         complaintBox.put('messPendingId', newData.id);
         return {'status': true};
-      } else {
-        return {'status': false, 'type': 'pendingexist'};
-      }
+      // } else {
+      //   return {'status': false, 'type': 'pendingexist'};
+      // }
     } catch (error) {
       return {'status': false, 'type': 'someerr'};
     }
@@ -203,8 +203,12 @@ Future<Map<String, dynamic>> addDisciplineComplaint(
       final newData = await db.collection('discipline').add(data);
       String email = data['studentEmail'];
       Box complaintBox = Hive.box('complaints');
-      final isPending = complaintBox.get('disciplinePending') ?? false;
-      if (!isPending) {
+      // final isPending = complaintBox.get('disciplinePending') ?? false;
+      // print('------------------------------');
+      // print(isPending);
+      // print('------------------------------');
+      // if (!isPending) {
+        print('inside if');
         List<dynamic> newComplaintList = [];
         List<dynamic> hiveOldData = complaintBox.get('disciplineHistory') ?? [];
         await db
@@ -242,9 +246,9 @@ Future<Map<String, dynamic>> addDisciplineComplaint(
         complaintBox.put('disciplinePending', true);
         complaintBox.put('discPendingId', newData.id);
         return {'status': true};
-      } else {
-        return {'status': false, 'type': 'pendingexist'};
-      }
+      // } else {
+      //   return {'status': false, 'type': 'pendingexist'};
+      // }
     } catch (error) {
       return {'status': false, 'type': 'someerr'};
     }

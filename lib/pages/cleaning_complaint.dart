@@ -22,12 +22,11 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
     blockTextController.text = userBox.get('block');
     roomTextController.text = userBox.get('room').toString();
   }
+
   TextEditingController blockTextController = TextEditingController();
 
   TextEditingController roomTextController = TextEditingController();
   TextEditingController messageController = TextEditingController();
-
-  
 
   bool roomIsChecked = false;
   bool generalsChecked = false;
@@ -44,79 +43,93 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
   int cleaningOfCount = 0;
   List<int> cleaningOfSelected = [];
 
-  void checkCleaningOfCurrent(){
-    if(cleaningOfCount >= 2){
+  void checkCleaningOfCurrent() {
+    if (cleaningOfCount >= 2) {
       cleaningOfCount--;
-      if(cleaningOfSelected[0] == 0) setState(() => roomIsChecked = false);
-      if(cleaningOfSelected[0] == 1) setState(() => generalsChecked = false);
-      if(cleaningOfSelected[0] == 2) setState(() => indianToiletIsChecked = false);
-      if(cleaningOfSelected[0] == 3) setState(() => westernToiletIsChecked = false);
-      if(cleaningOfSelected[0] == 4) setState(() => purifierAreaIsChecked = false);
-      if(cleaningOfSelected[0] == 5) setState(() => bathroomsIsChecked = false);
+      if (cleaningOfSelected[0] == 0) setState(() => roomIsChecked = false);
+      if (cleaningOfSelected[0] == 1) setState(() => generalsChecked = false);
+      if (cleaningOfSelected[0] == 2)
+        setState(() => indianToiletIsChecked = false);
+      if (cleaningOfSelected[0] == 3)
+        setState(() => westernToiletIsChecked = false);
+      if (cleaningOfSelected[0] == 4)
+        setState(() => purifierAreaIsChecked = false);
+      if (cleaningOfSelected[0] == 5)
+        setState(() => bathroomsIsChecked = false);
       cleaningOfSelected.removeAt(0);
     }
   }
 
- Future<Map<String, dynamic>> validateAndSave() async{
+  Future<Map<String, dynamic>> validateAndSave() async {
     setState(() {
       _isLoading = true;
     });
     String message = messageController.text;
     List<String> cleaningOf = [];
     bool errors = false;
-    if(roomIsChecked) cleaningOf.add('rm');
-    if(generalsChecked) cleaningOf.add('gn');
-    if(purifierAreaIsChecked) cleaningOf.add('pa');
-    if(westernToiletIsChecked) cleaningOf.add('wt');
-    if(indianToiletIsChecked) cleaningOf.add('it');
-    if(bathroomsIsChecked) cleaningOf.add('bt');
-    if(cleaningOf.isEmpty){
+    if (roomIsChecked) cleaningOf.add('rm');
+    if (generalsChecked) cleaningOf.add('gn');
+    if (purifierAreaIsChecked) cleaningOf.add('pa');
+    if (westernToiletIsChecked) cleaningOf.add('wt');
+    if (indianToiletIsChecked) cleaningOf.add('it');
+    if (bathroomsIsChecked) cleaningOf.add('bt');
+    if (cleaningOf.isEmpty) {
       errors = true;
       setState(() {
         cleaningOfError = true;
       });
     }
-    if(message == '' || message == null){
+    if (message == '' || message == null) {
       errors = true;
       setState(() {
         complaintError = true;
       });
     }
-    if(!errors){
-      String email = userBox.get('email');
-      String name = userBox.get('name');
-      String regno = userBox.get('regno');
-      Map<String,dynamic> dataToUpload = {
-        'block' : blockTextController.text,
-        'room' : roomTextController.text,
-        'name' : name,
-        'regno' : regno,
-        'status' : 'pending',
-        'studentEmail' : email,
-        'timestamp' : FieldValue.serverTimestamp(),
-        'category' : cleaningOf,
-        'complaint' : message
-      };
-      Map<String, dynamic> response  = await addCleaningRequest(dataToUpload);
-      setState(() {
-        _isLoading = false;
-      }); 
-      if(response['status']){
-        if(roomIsChecked) setState(() => roomIsChecked = false);
-        if(generalsChecked) setState(() => generalsChecked = false);
-        if(purifierAreaIsChecked) setState(() => purifierAreaIsChecked = false);
-        if(westernToiletIsChecked) setState(() => westernToiletIsChecked = false);
-        if(indianToiletIsChecked) setState(() => indianToiletIsChecked = false);
-        if(bathroomsIsChecked) setState(() => bathroomsIsChecked = false);
+    if (!errors) {
+      Box complaintBox = Hive.box('complaints');
+      final bool isPending = complaintBox.get('cleaningPending') ?? false;
+      if (isPending) {
         setState(() {
-          remainingCharacters = 100;
+          _isLoading = false;
         });
-        messageController.clear();
+        return {'status': false, 'type': 'pendingexist'};
+      } else {
+        String email = userBox.get('email');
+        String name = userBox.get('name');
+        String regno = userBox.get('regno');
+        Map<String, dynamic> dataToUpload = {
+          'block': blockTextController.text,
+          'room': roomTextController.text,
+          'name': name,
+          'regno': regno,
+          'status': 'pending',
+          'studentEmail': email,
+          'timestamp': FieldValue.serverTimestamp(),
+          'category': cleaningOf,
+          'complaint': message
+        };
+        Map<String, dynamic> response = await addCleaningRequest(dataToUpload);
+        setState(() {
+          _isLoading = false;
+        });
+        if (response['status']) {
+          if (roomIsChecked) setState(() => roomIsChecked = false);
+          if (generalsChecked) setState(() => generalsChecked = false);
+          if (purifierAreaIsChecked)
+            setState(() => purifierAreaIsChecked = false);
+          if (westernToiletIsChecked)
+            setState(() => westernToiletIsChecked = false);
+          if (indianToiletIsChecked)
+            setState(() => indianToiletIsChecked = false);
+          if (bathroomsIsChecked) setState(() => bathroomsIsChecked = false);
+          setState(() {
+            remainingCharacters = 100;
+          });
+          messageController.clear();
+        } else {}
+        return response;
       }
-      else{}
-      return response;
-    }
-    else{
+    } else {
       setState(() {
         _isLoading = false;
       });
@@ -132,26 +145,26 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
         height: double.infinity,
         width: double.infinity,
         decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: <Color>[
-                  const Color(0xffF7F8FA),
-                const Color(0xffDAE8F5).withOpacity(1),
-                const Color(0xffDAE8F5).withOpacity(1),
-                const Color(0xffDAE8F5).withOpacity(1),
-                const Color(0xffDBE9F6).withOpacity(1),
-                ],
-                tileMode: TileMode.mirror,
-              ),
-            ),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: <Color>[
+              const Color(0xffF7F8FA),
+              const Color(0xffDAE8F5).withOpacity(1),
+              const Color(0xffDAE8F5).withOpacity(1),
+              const Color(0xffDAE8F5).withOpacity(1),
+              const Color(0xffDBE9F6).withOpacity(1),
+            ],
+            tileMode: TileMode.mirror,
+          ),
+        ),
         child: SingleChildScrollView(
           child: SafeArea(
-            
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 15.0,left: 15,top: 10),
+                  padding:
+                      const EdgeInsets.only(right: 15.0, left: 15, top: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -174,19 +187,20 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
                         ),
                       ),
                       Padding(
-                    padding: const EdgeInsets.only(right: 25),
-                    child: InkWell(
-                      onTap: (){
-                        Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => Profile()));
-                      },
-                      child: CircleAvatar(
-                        backgroundColor: Colors.blue.withOpacity(0),
-                        backgroundImage:
-                            const AssetImage('assets/images/profile_avatar.png'),
-                        radius: 25,
+                        padding: const EdgeInsets.only(right: 25),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                                MaterialPageRoute(builder: (ctx) => Profile()));
+                          },
+                          child: CircleAvatar(
+                            backgroundColor: Colors.blue.withOpacity(0),
+                            backgroundImage: const AssetImage(
+                                'assets/images/profile_avatar.png'),
+                            radius: 25,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
                     ],
                   ),
                 ),
@@ -224,7 +238,6 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
                         decoration: BoxDecoration(
                           color: Color.fromARGB(255, 239, 239, 255),
                           borderRadius: BorderRadius.circular(10),
-                          
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -258,7 +271,7 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
                           child: TextFormField(
                             controller: roomTextController,
                             readOnly: true,
-                            decoration:const InputDecoration(
+                            decoration: const InputDecoration(
                               border: InputBorder.none,
                             ),
                           ),
@@ -282,10 +295,105 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
                               child: Column(
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        "Room",
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Checkbox(
+                                        value: roomIsChecked,
+                                        activeColor: Colors.blue,
+                                        checkColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(4)),
+                                        onChanged: (newValue) {
+                                          checkCleaningOfCurrent();
+                                          cleaningOfCount++;
+                                          cleaningOfSelected.add(0);
+                                          setState(() {
+                                            roomIsChecked = newValue!;
+                                          });
+                                          if (cleaningOfError)
+                                            cleaningOfError = false;
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        "General",
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Checkbox(
+                                        value: generalsChecked,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(4)),
+                                        onChanged: (newValue) {
+                                          checkCleaningOfCurrent();
+                                          cleaningOfCount++;
+                                          cleaningOfSelected.add(1);
+                                          setState(() {
+                                            generalsChecked = newValue!;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        "Indian Toilets",
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ), // Add this line to create space
+                                      Checkbox(
+                                        value: indianToiletIsChecked,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(4)),
+                                        onChanged: (newValue) {
+                                          checkCleaningOfCurrent();
+                                          cleaningOfCount++;
+                                          cleaningOfSelected.add(2);
+                                          setState(() {
+                                            indianToiletIsChecked = newValue!;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                                child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     const Text(
-                                      "Room",
+                                      "Western Toilets",
                                       style: TextStyle(
                                         fontSize: 15,
                                         color: Colors.black,
@@ -293,92 +401,11 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
                                       ),
                                     ),
                                     Checkbox(
-                                      value: roomIsChecked,
-                                      activeColor: Colors.blue,
-                                      checkColor: Colors.white,
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                      value: westernToiletIsChecked,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(4)),
                                       onChanged: (newValue) {
-                                        checkCleaningOfCurrent();
-                                        cleaningOfCount++;
-                                        cleaningOfSelected.add(0);
-                                        setState(() {
-                                          roomIsChecked = newValue!;
-                                        });
-                                        if(cleaningOfError) cleaningOfError = false;
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    "General",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Checkbox(
-                                    value: generalsChecked,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                                    onChanged: (newValue) {
-                                        checkCleaningOfCurrent();
-                                        cleaningOfCount++;
-                                        cleaningOfSelected.add(1);
-                                        setState(() {
-                                          generalsChecked = newValue!;
-                                        });
-                                      },
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    "Indian Toilets",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),// Add this line to create space
-                                  Checkbox(
-                                    value: indianToiletIsChecked,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                                    onChanged: (newValue) {
-                                        checkCleaningOfCurrent();
-                                        cleaningOfCount++;
-                                        cleaningOfSelected.add(2);
-                                        setState(() {
-                                          indianToiletIsChecked = newValue!;
-                                        });
-                                      },
-                                  ),
-                                ],
-                              ),
-                                ],
-                              ),
-                            ),
-                            Expanded(child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    "Western Toilets",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Checkbox(
-                                    value: westernToiletIsChecked,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                                    onChanged: (newValue) {
                                         checkCleaningOfCurrent();
                                         cleaningOfCount++;
                                         cleaningOfSelected.add(3);
@@ -386,24 +413,27 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
                                           westernToiletIsChecked = newValue!;
                                         });
                                       },
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    "Purifier Area",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
                                     ),
-                                  ),
-                                  Checkbox(
-                                    value: purifierAreaIsChecked,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                                    onChanged: (newValue) {
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      "Purifier Area",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Checkbox(
+                                      value: purifierAreaIsChecked,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(4)),
+                                      onChanged: (newValue) {
                                         checkCleaningOfCurrent();
                                         cleaningOfCount++;
                                         cleaningOfSelected.add(4);
@@ -411,26 +441,29 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
                                           purifierAreaIsChecked = newValue!;
                                         });
                                       },
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    "Bathrooms",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
                                     ),
-                                  ),
-                                  Checkbox(
-                                    value: bathroomsIsChecked,
-                                    activeColor: Colors.lightBlue,
-                                    checkColor: Colors.white,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                                    onChanged: (newValue) {
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      "Bathrooms",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Checkbox(
+                                      value: bathroomsIsChecked,
+                                      activeColor: Colors.lightBlue,
+                                      checkColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(4)),
+                                      onChanged: (newValue) {
                                         checkCleaningOfCurrent();
                                         cleaningOfCount++;
                                         cleaningOfSelected.add(5);
@@ -438,21 +471,20 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
                                           bathroomsIsChecked = newValue!;
                                         });
                                       },
-                                  ),
-                                ],
-                              ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ))
                           ],
                         ),
                       ),
-                      cleaningOfError ? Text(
-                        'Please Select a type',
-                        style: TextStyle(
-                          color: Colors.red
-                        ),
-                      ) : 
-                      SizedBox(),
+                      cleaningOfError
+                          ? Text(
+                              'Please Select a type',
+                              style: TextStyle(color: Colors.red),
+                            )
+                          : SizedBox(),
                       const SizedBox(height: 15), // Adjusted the spacing
                       const Text(
                         "Complaint",
@@ -462,12 +494,16 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-      
+
                       SizedBox(height: 20),
                       Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          border: Border.all(color: complaintError ?  Colors.red : Colors.transparent,width: 1.3) ,
+                          border: Border.all(
+                              color: complaintError
+                                  ? Colors.red
+                                  : Colors.transparent,
+                              width: 1.3),
                           color: Color.fromARGB(255, 239, 239, 255),
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: const [
@@ -475,19 +511,20 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
                               color: Color.fromARGB(255, 117, 116, 116),
                               spreadRadius: 1,
                               blurRadius: 1,
-                              offset: Offset(0,2),
+                              offset: Offset(0, 2),
                             ),
                           ],
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 5),
                           child: Form(
                             child: TextFormField(
                               controller: messageController,
                               maxLines: 5,
                               maxLength: 100,
-                              onChanged: (value){
-                                if(complaintError){
+                              onChanged: (value) {
+                                if (complaintError) {
                                   complaintError = false;
                                 }
                                 setState(() {
@@ -505,38 +542,42 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
                       ),
                       const SizedBox(height: 10), // Add spacing
                       Align(
-                        alignment: complaintError ? Alignment.bottomLeft : Alignment.bottomRight,
-                        child: complaintError ? const Text(
-                          "Please enter a message",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color:  Colors.red,
-                          ),
-                        ) :
-                         Text(
-                          "$remainingCharacters Characters left",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: remainingCharacters < 20 ? Colors.red :  Colors.grey,
-                          ),
-                        ),
+                        alignment: complaintError
+                            ? Alignment.bottomLeft
+                            : Alignment.bottomRight,
+                        child: complaintError
+                            ? const Text(
+                                "Please enter a message",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.red,
+                                ),
+                              )
+                            : Text(
+                                "$remainingCharacters Characters left",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: remainingCharacters < 20
+                                      ? Colors.red
+                                      : Colors.grey,
+                                ),
+                              ),
                       ),
-      
+
                       SizedBox(height: 20),
                       Align(
                         alignment: Alignment.center,
                         child: ElevatedButton(
-                          onPressed: () async{
+                          onPressed: () async {
                             var response = await validateAndSave();
-                            if(response['status']){
-                                QuickAlert.show(
-                                  context: context,
-                                  type: QuickAlertType.success,
-                                  text: 'Request submitted Successfully!',
-                                );
-                                FocusManager.instance.primaryFocus?.unfocus();
-                            } 
-                            else{
+                            if (response['status']) {
+                              QuickAlert.show(
+                                context: context,
+                                type: QuickAlertType.success,
+                                text: 'Request submitted Successfully!',
+                              );
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            } else {
                               if (response['type'] == 'someerr') {
                                 const snackBar = SnackBar(
                                   behavior: SnackBarBehavior.floating,
@@ -554,34 +595,37 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
                                   context: context,
                                   builder: (_) => NetworkErrorDialog(),
                                 );
-                              }else if (response['type'] == 'pendingexist') {
+                              } else if (response['type'] == 'pendingexist') {
                                 QuickAlert.show(
-                                context: context,
-                                type: QuickAlertType.info,
-                                text: 'A Request already exists!',
-                              );
+                                  context: context,
+                                  type: QuickAlertType.info,
+                                  text: 'A Request already exists!',
+                                );
                               } else {}
                             }
                           },
                           style: ElevatedButton.styleFrom(
                             primary: Color.fromARGB(255, 2, 109, 197),
                             onPrimary: Colors.white,
-                            padding: EdgeInsets.symmetric(vertical: 15 ),
+                            padding: EdgeInsets.symmetric(vertical: 15),
                             fixedSize: Size.fromWidth(deviceWidth * 0.5),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: _isLoading ? Center(
-                            child: CircularProgressIndicator(strokeWidth: 3,),
-                          ) : 
-                          Text(
-                            "Submit",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          child: _isLoading
+                              ? Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 3,
+                                  ),
+                                )
+                              : Text(
+                                  "Submit",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                         ),
                       ),
                     ],

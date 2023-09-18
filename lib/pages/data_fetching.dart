@@ -50,6 +50,7 @@ class _DataFetchScreenState extends State<DataFetchScreen> {
       boxUserDetails.put('block', details['block']);
       boxUserDetails.put('room', details['room']);
       boxUserDetails.put('mess', details['mess']);
+      boxUserDetails.put('messType', details['messType']);
       bool errors = false;
 
       final Box boxComplaints = Hive.box('complaints');
@@ -80,7 +81,7 @@ class _DataFetchScreenState extends State<DataFetchScreen> {
       }
 
       final Box boxMenu = Hive.box('messMenu');
-      final Map<String, dynamic> menuFetchResponse = await fetchCurrentMenu();
+      final Map<String, dynamic> menuFetchResponse = await fetchCurrentMenu(details['messType']);
       if (menuFetchResponse['status']) {
         if (menuFetchResponse['data'] != null) {
           final Map<String, dynamic> menuData = menuFetchResponse['data'];

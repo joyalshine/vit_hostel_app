@@ -1,16 +1,24 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vit_hostel_repo/backend/backend.dart';
 
 class OtpScreen extends StatefulWidget {
   const OtpScreen(
-      {super.key, required this.nextScreen, required this.backScreen,required this.otp, required this.email, required this.userDetails});
+      {super.key,
+      required this.nextScreen,
+      required this.backScreen,
+      required this.otp,
+      required this.email,
+      required this.userDetails});
 
   final void Function() nextScreen;
   final void Function() backScreen;
   final int otp;
   final String email;
-  final Map<String,dynamic> userDetails;
+  final Map<String, dynamic> userDetails;
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -18,48 +26,119 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   bool _isLoading = false;
-  final List<TextEditingController> inputControllers = [TextEditingController(),TextEditingController(),TextEditingController(),TextEditingController()];
+  final List<TextEditingController> inputControllers = [
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController()
+  ];
+  var otp = '';
+  int secondsRemaining = 20;
+  bool enableResend = false;
+  Timer? timer;
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    setState(() {
+      otp = widget.otp.toString();
+    });
+    startTimer();
+    super.initState();
+  }
 
-  void validateOTP() async{
+  void startTimer() {
+    timer = Timer.periodic(Duration(seconds: 1), (_) {
+      if (secondsRemaining != 0) {
+        setState(() {
+          secondsRemaining--;
+        });
+      } else {
+        setState(() {
+          enableResend = true;
+        });
+      }
+    });
+  }
+
+  void resendOTP() async {
+    setState(() {
+      _isLoading = true;
+    });
+    print(widget.email);
+    print(widget.userDetails['details']['name']);
+    final response = await sendOTP(widget.email, widget.userDetails['details']['name']);
+    print(response);
+    if (response['status']) {
+      const snackBar = SnackBar(
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(bottom: 45, left: 25, right: 25),
+        backgroundColor: Color.fromARGB(255, 69, 69, 83),
+        content: Text('OTP has been send'),
+      );
+      setState(() {
+        otp = response['otp'].toString();
+        secondsRemaining = 20;
+        enableResend = false;
+      });
+      startTimer();
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else {
+      const snackBar = SnackBar(
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(bottom: 15, left: 5, right: 5),
+        backgroundColor: Color.fromARGB(255, 223, 57, 19),
+        duration: Duration(seconds: 10),
+        content: Text('Some error occured'),
+      );
+
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  void validateOTP() async {
     setState(() {
       _isLoading = true;
     });
     FocusManager.instance.primaryFocus?.unfocus();
-    String enteredOTP = inputControllers[0].text + inputControllers[1].text + inputControllers[2].text + inputControllers[3].text;
-    if(enteredOTP.isEmpty || enteredOTP == ''){
+    String enteredOTP = inputControllers[0].text +
+        inputControllers[1].text +
+        inputControllers[2].text +
+        inputControllers[3].text;
+    if (enteredOTP.isEmpty || enteredOTP == '') {
       const snackBar = SnackBar(
-            behavior: SnackBarBehavior.floating,
-            margin:  EdgeInsets.only(bottom: 15,left: 5,right: 5),
-            backgroundColor: Color.fromARGB(255, 223, 57, 19),
-            content: Text('Enter the OTP!'),
-          );
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(bottom: 15, left: 5, right: 5),
+        backgroundColor: Color.fromARGB(255, 223, 57, 19),
+        content: Text('Enter the OTP!'),
+      );
 
-          setState(() {
-            _isLoading = false;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
-    else if(enteredOTP ==  widget.otp.toString()){
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else if (enteredOTP == otp) {
       widget.nextScreen();
-      
-    }
-    else{
+    } else {
       const snackBar = SnackBar(
-            behavior: SnackBarBehavior.floating,
-            margin:  EdgeInsets.only(bottom: 45,left: 25,right: 25),
-            backgroundColor: Color.fromARGB(255, 69, 69, 83),
-            content: Text('Invalid OTP!'),
-          );
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(bottom: 45, left: 25, right: 25),
+        backgroundColor: Color.fromARGB(255, 69, 69, 83),
+        content: Text('Invalid OTP!'),
+      );
 
-          setState(() {
-            _isLoading = false;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -174,23 +253,25 @@ class _OtpScreenState extends State<OtpScreen> {
                           },
                           cursorHeight: 17,
                           style: GoogleFonts.poppins(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                            height: 1
-                          ),
+                              fontSize: 22,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                              height: 1),
                           textAlign: TextAlign.center,
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Colors.grey.shade200.withOpacity(0.2),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(color: Colors.grey.shade200.withOpacity(0.2), width: 1.0),
+                              borderSide: BorderSide(
+                                  color: Colors.grey.shade200.withOpacity(0.2),
+                                  width: 1.0),
                             ),
-                            
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color.fromARGB(255, 40, 105, 180), width: 1.0),
+                              borderSide: const BorderSide(
+                                  color: Color.fromARGB(255, 40, 105, 180),
+                                  width: 1.0),
                             ),
                           ),
                         ),
@@ -202,7 +283,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   height: 20,
                 ),
                 TextButton(
-                  onPressed: _isLoading? null : validateOTP,
+                  onPressed: _isLoading ? null : validateOTP,
                   style: ButtonStyle(
                     overlayColor: MaterialStateProperty.all(
                       const Color.fromARGB(0, 255, 193, 7),
@@ -221,22 +302,28 @@ class _OtpScreenState extends State<OtpScreen> {
                       ),
                       borderRadius: BorderRadius.all(Radius.circular(20.0)),
                     ),
-                    child: _isLoading? const Center(child: CircularProgressIndicator(strokeWidth: 3,),) : const Text(
-                      'Continue',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 17.92,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    child: _isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3,
+                            ),
+                          )
+                        : const Text(
+                            'Continue',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 17.92,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                   ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Didn't received the otp ?",
+                      "Didn't received the OTP ?",
                       style: GoogleFonts.poppins(
                         fontSize: 15,
                         fontWeight: FontWeight.w400,
@@ -244,9 +331,9 @@ class _OtpScreenState extends State<OtpScreen> {
                       ),
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: enableResend ? resendOTP : () {},
                       child: Text(
-                        " Resend OTP",
+                        enableResend ? " Resend OTP" : '$secondsRemaining',
                         style: GoogleFonts.poppins(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,

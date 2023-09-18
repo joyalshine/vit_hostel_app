@@ -157,7 +157,7 @@ Future<Map<String, dynamic>> fetchUserComplaints(String email) async {
   }
 }
 
-Future<Map<String, dynamic>> fetchCurrentMenu() async {
+Future<Map<String, dynamic>> fetchCurrentMenu(messType) async {
   List<String> months = [
     'Jan',
     'Feb',
@@ -173,7 +173,7 @@ Future<Map<String, dynamic>> fetchCurrentMenu() async {
     'Dec'
   ];
   final date = DateTime.now();
-  String key = months[date.month - 1] + date.year.toString();
+  String key = months[date.month - 1] + date.year.toString() + '-' + messType;
   try {
     DocumentSnapshot doc = await db.collection('messMenu').doc(key).get();
     if (doc.exists) {

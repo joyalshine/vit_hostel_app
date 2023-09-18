@@ -28,12 +28,12 @@ class _FoodComplaintState extends State<FoodComplaint> {
   bool _isLoading = false;
   int remainingCharacters = 100;
 
-  Future<Map<String, dynamic>> validateAndSave() async{
+  Future<Map<String, dynamic>> validateAndSave() async {
     setState(() {
       _isLoading = true;
     });
     String message = messageController.text;
-    if(message == '' || message == null){
+    if (message == '' || message == null) {
       setState(() {
         complaintError = true;
       });
@@ -41,31 +41,39 @@ class _FoodComplaintState extends State<FoodComplaint> {
         _isLoading = false;
       });
       return {'status': false, 'type': 'incdata'};
-    }
-    else{
-      String email = userBox.get('email');
-      String name = userBox.get('name');
-      String regno = userBox.get('regno');
-      Map<String,dynamic> dataToUpload = {
-        'mess' : messController.text,
-        'name' : name,
-        'regno' : regno,
-        'status' : 'pending',
-        'studentEmail' : email,
-        'timestamp' : FieldValue.serverTimestamp(),
-        'complaint' : message
-      };
-      Map<String, dynamic> response  = await addMessComplaint(dataToUpload);
-      setState(() {
-        _isLoading = false;
-      }); 
-      if(response['status']){
+    } else {
+      Box complaintBox = Hive.box('complaints');
+      final isPending = complaintBox.get('messPending') ?? false;
+      if (isPending) {
         setState(() {
-          remainingCharacters = 100;
+          _isLoading = false;
         });
-        messageController.clear();
+        return {'status': false, 'type': 'pendingexist'};
+      } else {
+        String email = userBox.get('email');
+        String name = userBox.get('name');
+        String regno = userBox.get('regno');
+        Map<String, dynamic> dataToUpload = {
+          'mess': messController.text,
+          'name': name,
+          'regno': regno,
+          'status': 'pending',
+          'studentEmail': email,
+          'timestamp': FieldValue.serverTimestamp(),
+          'complaint': message
+        };
+        Map<String, dynamic> response = await addMessComplaint(dataToUpload);
+        setState(() {
+          _isLoading = false;
+        });
+        if (response['status']) {
+          setState(() {
+            remainingCharacters = 100;
+          });
+          messageController.clear();
+        }
+        return response;
       }
-      return response;
     }
   }
 
@@ -74,8 +82,8 @@ class _FoodComplaintState extends State<FoodComplaint> {
     double deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
         body: Container(
-          height: double.infinity,
-        width: double.infinity,
+      height: double.infinity,
+      width: double.infinity,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -94,45 +102,46 @@ class _FoodComplaintState extends State<FoodComplaint> {
         child: SafeArea(
           child: Column(children: [
             Padding(
-                  padding: const EdgeInsets.only(right: 15.0,left: 15,top: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Color(0xFFDDE0F6),
-                          borderRadius: BorderRadius.circular(10),
-                          shape: BoxShape.rectangle,
+              padding: const EdgeInsets.only(right: 15.0, left: 15, top: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFDDE0F6),
+                      borderRadius: BorderRadius.circular(10),
+                      shape: BoxShape.rectangle,
+                    ),
+                    child: Center(
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back_outlined,
+                          color: Colors.black, // Arrow color
                         ),
-                        child: Center(
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.arrow_back_outlined,
-                              color: Colors.black, // Arrow color
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
                       ),
-                      Padding(
+                    ),
+                  ),
+                  Padding(
                     padding: const EdgeInsets.only(right: 25),
                     child: InkWell(
-                      onTap: (){
-                        Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => Profile()));
+                      onTap: () {
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (ctx) => Profile()));
                       },
                       child: CircleAvatar(
                         backgroundColor: Colors.blue.withOpacity(0),
-                        backgroundImage:
-                            const AssetImage('assets/images/profile_avatar.png'),
+                        backgroundImage: const AssetImage(
+                            'assets/images/profile_avatar.png'),
                         radius: 25,
                       ),
                     ),
                   ),
-                    ],
-                  ),
-                ),
+                ],
+              ),
+            ),
             Container(
               alignment: Alignment.topLeft,
               padding: EdgeInsets.only(
@@ -197,123 +206,134 @@ class _FoodComplaintState extends State<FoodComplaint> {
                   ),
                   SizedBox(height: 20),
                   Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: complaintError ?  Colors.red : Colors.transparent,width: 1.3) ,
-                              color: Color.fromARGB(255, 239, 239, 255),
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Color.fromARGB(255, 117, 116, 116),
-                                  spreadRadius: 1,
-                                  blurRadius: 1,
-                                  offset: Offset(0,2),
-                                ),
-                              ],
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
-                              child: Form(
-                                child: TextFormField(
-                                  controller: messageController,
-                                  maxLines: 5,
-                                  maxLength: 100,
-                                  onChanged: (value){
-                                    if(complaintError){
-                                      complaintError = false;
-                                    }
-                                    setState(() {
-                                      remainingCharacters = 100 - value.length;
-                                    });
-                                  },
-                                  decoration: const InputDecoration(
-                                    counterText: '',
-                                    hintText: "Enter your complaint",
-                                    border: InputBorder.none,
-                                  ),
-                                ),
-                              ),
-                            ),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          color:
+                              complaintError ? Colors.red : Colors.transparent,
+                          width: 1.3),
+                      color: Color.fromARGB(255, 239, 239, 255),
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color.fromARGB(255, 117, 116, 116),
+                          spreadRadius: 1,
+                          blurRadius: 1,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 5),
+                      child: Form(
+                        child: TextFormField(
+                          controller: messageController,
+                          maxLines: 5,
+                          maxLength: 100,
+                          onChanged: (value) {
+                            if (complaintError) {
+                              complaintError = false;
+                            }
+                            setState(() {
+                              remainingCharacters = 100 - value.length;
+                            });
+                          },
+                          decoration: const InputDecoration(
+                            counterText: '',
+                            hintText: "Enter your complaint",
+                            border: InputBorder.none,
                           ),
+                        ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 10), // Add spacing
                   Align(
-                    alignment: complaintError ? Alignment.bottomLeft : Alignment.bottomRight,
-                    child: complaintError ? const Text(
-                      "Please enter a message",
-                      style: TextStyle(
-                      fontSize: 12,
-                      color:  Colors.red,
-                              ),
-                            ) :
-                             Text(
-                              "$remainingCharacters Characters left",
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: remainingCharacters < 20 ? Colors.red :  Colors.grey,
-                              ),
+                    alignment: complaintError
+                        ? Alignment.bottomLeft
+                        : Alignment.bottomRight,
+                    child: complaintError
+                        ? const Text(
+                            "Please enter a message",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.red,
+                            ),
+                          )
+                        : Text(
+                            "$remainingCharacters Characters left",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: remainingCharacters < 20
+                                  ? Colors.red
+                                  : Colors.grey,
                             ),
                           ),
+                  ),
                   SizedBox(height: 30),
                   Align(
-                            alignment: Alignment.center,
-                            child: ElevatedButton(
-                              onPressed: () async{
-                                var response = await validateAndSave();
-                            if (response['status']) {
-                              QuickAlert.show(
-                                context: context,
-                                type: QuickAlertType.success,
-                                text: 'Request submitted Successfully!',
-                              );
-                              FocusManager.instance.primaryFocus?.unfocus();
-                            } else {
-                              if (response['type'] == 'someerr') {
-                                const snackBar = SnackBar(
-                                  behavior: SnackBarBehavior.floating,
-                                  margin: EdgeInsets.only(
-                                      bottom: 15, left: 5, right: 5),
-                                  backgroundColor:
-                                      Color.fromARGB(255, 223, 57, 19),
-                                  content: Text('Some error ocurred'),
-                                );
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(snackBar);
-                              } else if (response['type'] == 'noconn') {
-                                showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (_) => NetworkErrorDialog(),
-                                );
-                              }else if (response['type'] == 'pendingexist') {
-                                QuickAlert.show(
-                                context: context,
-                                type: QuickAlertType.info,
-                                text: 'A Request already exists!',
-                              );
-                              } else {}
-                            }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                primary: Color.fromARGB(255, 2, 109, 197),
-                                onPrimary: Colors.white,
-                                padding: EdgeInsets.symmetric(vertical: 15 ),
-                                fixedSize: Size.fromWidth(deviceWidth * 0.5),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
+                    alignment: Alignment.center,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        var response = await validateAndSave();
+                        if (response['status']) {
+                          QuickAlert.show(
+                            context: context,
+                            type: QuickAlertType.success,
+                            text: 'Request submitted Successfully!',
+                          );
+                          FocusManager.instance.primaryFocus?.unfocus();
+                        } else {
+                          if (response['type'] == 'someerr') {
+                            const snackBar = SnackBar(
+                              behavior: SnackBarBehavior.floating,
+                              margin: EdgeInsets.only(
+                                  bottom: 15, left: 5, right: 5),
+                              backgroundColor: Color.fromARGB(255, 223, 57, 19),
+                              content: Text('Some error ocurred'),
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          } else if (response['type'] == 'noconn') {
+                            showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (_) => NetworkErrorDialog(),
+                            );
+                          } else if (response['type'] == 'pendingexist') {
+                            QuickAlert.show(
+                              context: context,
+                              type: QuickAlertType.info,
+                              text: 'A Request already exists!',
+                            );
+                          } else {}
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Color.fromARGB(255, 2, 109, 197),
+                        onPrimary: Colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                        fixedSize: Size.fromWidth(deviceWidth * 0.5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: _isLoading
+                          ? Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
                               ),
-                              child: _isLoading ? Center(
-                                child: CircularProgressIndicator(strokeWidth: 3,),
-                              ) : 
-                              Text(
-                                "Submit",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            )
+                          : Text(
+                              "Submit",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -323,7 +343,6 @@ class _FoodComplaintState extends State<FoodComplaint> {
     ));
   }
 }
-
 
 class NetworkErrorDialog extends StatelessWidget {
   const NetworkErrorDialog({Key? key}) : super(key: key);
