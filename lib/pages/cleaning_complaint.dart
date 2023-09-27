@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:quickalert/quickalert.dart';
+import 'package:vit_hostel_repo/firebase/data_assets.dart';
 import 'package:vit_hostel_repo/pages/profile_screen.dart';
 
 import '../firebase/complaint_add_functions.dart';
@@ -19,7 +20,7 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    blockTextController.text = userBox.get('block');
+    blockTextController.text =  BLOCKS[userBox.get('block')] ?? '';
     roomTextController.text = userBox.get('room').toString();
   }
 
@@ -98,15 +99,14 @@ class _CleaningComplaintState extends State<CleaningComplaint> {
         String name = userBox.get('name');
         String regno = userBox.get('regno');
         Map<String, dynamic> dataToUpload = {
-          'block': blockTextController.text,
+          'block': userBox.get('block'),
           'room': roomTextController.text,
           'name': name,
           'regno': regno,
           'status': 'pending',
           'studentEmail': email,
-          'timestamp': FieldValue.serverTimestamp(),
           'category': cleaningOf,
-          'complaint': message
+          'complainDesc': message
         };
         Map<String, dynamic> response = await addCleaningRequest(dataToUpload);
         setState(() {

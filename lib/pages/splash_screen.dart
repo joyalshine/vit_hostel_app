@@ -60,6 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
       var newUserDetailsResponse =
           await fetchUserDetails(boxUserDetails.get('email'));
+      print(newUserDetailsResponse);
       if (newUserDetailsResponse['isValid']) {
         var details = newUserDetailsResponse['details'];
         boxUserDetails.put('name', details['name']);

@@ -56,6 +56,7 @@ class _DataFetchScreenState extends State<DataFetchScreen> {
       final Box boxComplaints = Hive.box('complaints');
       final Map<String, dynamic> complaintsResponse =
           await fetchUserComplaints(widget.userDetails['email']);
+      print(complaintsResponse);
       if (complaintsResponse['status']) {
         boxComplaints.put('cleaningHistory', complaintsResponse['cleaning']);
         boxComplaints.put('messHistory', complaintsResponse['mess']);
@@ -89,7 +90,6 @@ class _DataFetchScreenState extends State<DataFetchScreen> {
           boxMenu.put('month', menuFetchResponse['key']);
         }
       } else {
-        print('inisde else menu');
         errors = true;
       }
       if (!errors) {

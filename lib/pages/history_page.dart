@@ -64,14 +64,15 @@ class _HistoryState extends State<History> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    margin: const EdgeInsets.only(left: 10, top: 5),
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(11),
-                        border: Border.all(
-                            color: const Color.fromARGB(255, 201, 201, 201))),
-                    child: const Icon(Icons.arrow_back),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text(
+                      'Complaints',
+                      style: const TextStyle(
+                          fontSize: 19,
+                          color: Color(0xff3156AC),
+                          fontWeight: FontWeight.w700),
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 25),

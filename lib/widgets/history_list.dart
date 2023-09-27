@@ -40,8 +40,10 @@ class _HistoryListState extends State<HistoryList> {
         }
         return false;
       }).toList();
-      newData.sort((a, b) => (b["resolveTime"] ?? b["denyTime"])
-          .compareTo(a["resolveTime"] ?? a["denyTime"]));
+      newData.sort((a, b) => b["timestamp"].compareTo(a["timestamp"]));
+      newData = new List.from(newData.reversed);
+      // newData.sort((a, b) => (b["updatedTime"] ?? b["denyTime"])
+      //     .compareTo(a["resolveTime"] ?? a["denyTime"]));
     } else {
       newData = widget.data.where((element) {
         if (element['status'] == '' || element['status'] == 'pending') {
@@ -54,6 +56,7 @@ class _HistoryListState extends State<HistoryList> {
     setState(() {
       dataToShow = newData;
     });
+    print(newData);
   }
 
   String categoryDisplay(List<dynamic> list, String? type) {
@@ -108,6 +111,7 @@ class _HistoryListState extends State<HistoryList> {
                     resolvedMinutes = completed.minute;
                   }
                   var category = item['category'];
+
                   return Container(
                     margin: EdgeInsets.only(bottom: 15),
                     decoration: BoxDecoration(
@@ -181,16 +185,19 @@ class _HistoryListState extends State<HistoryList> {
                           ),
                           item['complaintType'] != 'Mess'
                               ? Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       'Block : ',
                                       style: TextStyle(color: Colors.white),
                                     ),
-                                    Text(
-                                      item['block'],
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
+                                    Flexible(
+                                      child: Text(
+                                        BLOCKS[item['block']]!,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     )
                                   ],
@@ -207,7 +214,7 @@ class _HistoryListState extends State<HistoryList> {
                                       style: TextStyle(color: Colors.white),
                                     ),
                                     Text(
-                                      item['room'],
+                                      item['room'].toString(),
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -216,16 +223,19 @@ class _HistoryListState extends State<HistoryList> {
                                   ],
                                 )
                               : Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       'Mess : ',
                                       style: TextStyle(color: Colors.white),
                                     ),
-                                    Text(
-                                      item['mess'],
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
+                                    Flexible(
+                                      child: Text(
+                                        item['mess'],
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     )
                                   ],
@@ -360,7 +370,7 @@ class _HistoryListState extends State<HistoryList> {
                             height: 8,
                           ),
                           Text(
-                            item['complaint'],
+                            item['complainDesc'],
                             style: TextStyle(color: Colors.white),
                           ),
                           if (item['status'] == 'deny')

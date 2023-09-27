@@ -64,8 +64,7 @@ class _EmailScreenState extends State<EmailScreen> {
           backgroundColor: Colors.transparent,
           content: AwesomeSnackbarContent(
             title: 'Oops!',
-            message:
-                'Enter a Email!',
+            message: 'Enter a Email!',
             contentType: ContentType.failure,
           ),
         );
@@ -76,7 +75,6 @@ class _EmailScreenState extends State<EmailScreen> {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(snackBar);
-
       } else if (!email.contains('@')) {
         const snackBar = SnackBar(
           behavior: SnackBarBehavior.floating,
@@ -113,27 +111,12 @@ class _EmailScreenState extends State<EmailScreen> {
             builder: (_) => NetworkErrorDialog(),
           );
         } else {
-          Map<String, dynamic> userDetails = await validateUser(email);
+          Map<String, dynamic> userDetails = await loginUser(email);
           if (userDetails['isValid']) {
-            final response = await sendOTP(
-                userDetails['email'], userDetails['details']['name']);
-            if (response['status']) {
-              widget.nextScreen(
-                  response['otp'], userDetails['email'], userDetails);
-            } else {
-              const snackBar = SnackBar(
-                behavior: SnackBarBehavior.floating,
-                margin: EdgeInsets.only(bottom: 15, left: 5, right: 5),
-                backgroundColor: Color.fromARGB(255, 223, 57, 19),
-                duration: Duration(seconds: 10),
-                content: Text('Some error occured'),
-              );
-
-              setState(() {
-                _isLoading = false;
-              });
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            }
+            print('=================');
+            print(userDetails);
+            widget.nextScreen(
+                userDetails['OTP'], userDetails['email'], userDetails);
           } else {
             if (userDetails['type'] == 'invalidUser') {
               const snackBar = SnackBar(
