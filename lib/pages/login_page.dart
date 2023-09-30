@@ -19,6 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   var activeScreen = 'start-screen';
   late int otpCode;
   late String userEmail;
+  late String JWT;
   late Map<String,dynamic> userDetails;
 
   @override

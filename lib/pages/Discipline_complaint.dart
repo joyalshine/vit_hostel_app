@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:vit_hostel_repo/firebase/complaint_add_functions.dart';
+import 'package:vit_hostel_repo/firebase/data_assets.dart';
 import 'package:vit_hostel_repo/pages/profile_screen.dart';
 
 class DisciplineComplaint extends StatefulWidget {
@@ -22,7 +23,7 @@ class _DisciplineComplaintState extends State<DisciplineComplaint> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    blockTextController.text = userBox.get('block');
+    blockTextController.text = BLOCKS[userBox.get('block')] ?? '';
     roomTextController.text = userBox.get('room').toString();
   }
 
@@ -85,15 +86,14 @@ class _DisciplineComplaintState extends State<DisciplineComplaint> {
         String name = userBox.get('name');
         String regno = userBox.get('regno');
         Map<String, dynamic> dataToUpload = {
-          'block': blockTextController.text,
+          'block': userBox.get('block'),
           'room': roomTextController.text,
           'name': name,
           'regno': regno,
           'status': 'pending',
           'studentEmail': email,
-          'timestamp': FieldValue.serverTimestamp(),
           'category': regardingData,
-          'complaint': message
+          'complainDesc': message
         };
         Map<String, dynamic> response =
             await addDisciplineComplaint(dataToUpload);

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:vit_hostel_repo/firebase/complaint_add_functions.dart';
+import 'package:vit_hostel_repo/firebase/data_assets.dart';
 import 'package:vit_hostel_repo/pages/profile_screen.dart';
 
 class FoodComplaint extends StatefulWidget {
@@ -21,7 +22,7 @@ class _FoodComplaintState extends State<FoodComplaint> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    messController.text = userBox.get('block');
+    messController.text = userBox.get('mess') ?? '';
   }
 
   bool complaintError = false;
@@ -59,8 +60,7 @@ class _FoodComplaintState extends State<FoodComplaint> {
           'regno': regno,
           'status': 'pending',
           'studentEmail': email,
-          'timestamp': FieldValue.serverTimestamp(),
-          'complaint': message
+          'complainDesc': message
         };
         Map<String, dynamic> response = await addMessComplaint(dataToUpload);
         setState(() {

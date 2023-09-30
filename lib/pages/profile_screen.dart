@@ -1,30 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:vit_hostel_repo/firebase/data_assets.dart';
 
 class Profile extends StatelessWidget {
   Profile({super.key});
 
   Box userDetails = Hive.box('userDetails');
-  String name(){
+  String name() {
     return userDetails.get('name') ?? '';
   }
-  String regno(){
+
+  String regno() {
     return userDetails.get('regno') ?? '';
   }
-  String email(){
+
+  String email() {
     return userDetails.get('email') ?? '';
   }
-  String hostel(){
-    String block = userDetails.get('block') ?? '';
-    int room = userDetails.get('room') ?? '';
-    return '$room $block';
+
+
+  String messType() {
+    String data = userDetails.get('messType');
+    return "${data[0].toUpperCase()}${data.substring(1)}";
   }
-  String mess(){
+
+  String hostel() {
+    String block = BLOCKS[userDetails.get('block')] ?? '';
+    return '$block';
+  }
+
+  String room() {
+    var room = userDetails.get('room') ?? '';
+    return '$room';
+  }
+
+  String mess() {
     return userDetails.get('mess') ?? '';
   }
 
   @override
   Widget build(BuildContext context) {
+    double deviceWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -45,7 +62,7 @@ class Profile extends StatelessWidget {
           children: [
             Container(
               margin: EdgeInsets.symmetric(vertical: 80, horizontal: 30),
-              padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               decoration: const BoxDecoration(
                 color: Color(0xFF5451D6),
                 borderRadius: BorderRadius.only(
@@ -62,9 +79,12 @@ class Profile extends StatelessWidget {
                     maxRadius: 50.0,
                     minRadius: 50.0,
                     backgroundColor: const Color.fromARGB(255, 251, 254, 255),
-                    backgroundImage: AssetImage("assets/images/profile_avatar.png"),
+                    backgroundImage:
+                        AssetImage("assets/images/profile_avatar.png"),
                   ),
-                  SizedBox(width: 30,),
+                  SizedBox(
+                    width: 30,
+                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -76,7 +96,9 @@ class Profile extends StatelessWidget {
                             .titleMedium
                             ?.copyWith(fontSize: 20, color: Colors.white),
                       ),
-                      SizedBox(height: 3,),
+                      SizedBox(
+                        height: 3,
+                      ),
                       Text(
                         'Reg no: ' + regno(),
                         style: Theme.of(context)
@@ -91,7 +113,7 @@ class Profile extends StatelessWidget {
             ),
             Expanded(
               child: Container(
-                padding: EdgeInsets.all(10),
+                padding: EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -119,12 +141,15 @@ class Profile extends StatelessWidget {
                             SizedBox(
                               height: 7,
                             ),
-                            Text(
-                              email(),
-                              style: TextStyle(
-                                color: Color(0xFF1C305E),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15.0,
+                            Container(
+                              width: deviceWidth * 0.7,
+                              child: Text(
+                                email(),
+                                style: TextStyle(
+                                  color: Color(0xFF1C305E),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15.0,
+                                ),
                               ),
                             ),
                             SizedBox(
@@ -161,12 +186,60 @@ class Profile extends StatelessWidget {
                             SizedBox(
                               height: 7,
                             ),
-                            Text(
-                              hostel(),
+                            Container(
+                              width: deviceWidth * 0.7,
+                              child: Text(
+                                hostel(),
+                                style: TextStyle(
+                                  color: Color(0xFF1C305E),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15.0,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width / 1.8,
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          "assets/images/profile_hostel_icon.png",
+                          width: 35,
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Room No',
                               style: TextStyle(
-                                color: Color(0xFF1C305E),
+                                color: Color.fromARGB(152, 28, 48, 94),
                                 fontWeight: FontWeight.w600,
-                                fontSize: 15.0,
+                                fontSize: 10.0,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 7,
+                            ),
+                            Container(
+                              width: deviceWidth * 0.7,
+                              child: Text(
+                                room(),
+                                style: TextStyle(
+                                  color: Color(0xFF1C305E),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15.0,
+                                ),
                               ),
                             ),
                             SizedBox(
@@ -203,12 +276,60 @@ class Profile extends StatelessWidget {
                             SizedBox(
                               height: 7,
                             ),
-                            Text(
-                              mess(),
+                            Container(
+                              width: deviceWidth * 0.7,
+                              child: Text(
+                                mess(),
+                                style: TextStyle(
+                                  color: Color(0xFF1C305E),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15.0,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width / 1.8,
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          "assets/images/mess_icon.png",
+                          width: 35,
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Mess Type',
                               style: TextStyle(
-                                color: Color(0xFF1C305E),
+                                color: Color.fromARGB(152, 28, 48, 94),
                                 fontWeight: FontWeight.w600,
-                                fontSize: 15.0,
+                                fontSize: 10.0,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 7,
+                            ),
+                            Container(
+                              width: deviceWidth * 0.7,
+                              child: Text(
+                                messType(),
+                                style: TextStyle(
+                                  color: Color(0xFF1C305E),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15.0,
+                                ),
                               ),
                             ),
                             SizedBox(

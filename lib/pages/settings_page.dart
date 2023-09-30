@@ -72,6 +72,7 @@ class _SettingsState extends State<Settings> {
   void logout() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('loggedIn', false);
+    await prefs.setString('JWT', 'null');
     await Hive.box('userDetails').clear();
     await Hive.box('messMenu').clear();
     await Hive.box('complaints').clear();
@@ -98,17 +99,17 @@ class _SettingsState extends State<Settings> {
         child: ListView(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Container(
-                  margin: const EdgeInsets.only(left: 10, top: 5),
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(11),
-                      border: Border.all(
-                          color: const Color.fromARGB(255, 201, 201, 201))),
-                  child: const Icon(Icons.arrow_back),
-                ),
+                // Container(
+                //   margin: const EdgeInsets.only(left: 10, top: 5),
+                //   padding: const EdgeInsets.all(6),
+                //   decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(11),
+                //       border: Border.all(
+                //           color: const Color.fromARGB(255, 201, 201, 201))),
+                //   child: const Icon(Icons.arrow_back),
+                // ),
                 Padding(
                     padding: const EdgeInsets.only(right: 25),
                     child: ElevatedButton(
@@ -191,7 +192,7 @@ class _SettingsState extends State<Settings> {
               height: 20,
             ),
             const Text(
-              "Developers",
+              "Info",
               style: TextStyle(
                 fontSize: 20,
                 color: Color(0xff1C305E),
@@ -205,163 +206,163 @@ class _SettingsState extends State<Settings> {
             const SizedBox(
               height: 6,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.blue.withOpacity(0),
-                      backgroundImage: const AssetImage(
-                          'assets/images/developers_avatar.png'),
-                      radius: 24,
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    const Text(
-                      'Sabyajeet Sing Greewal',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Image.asset(
-                      'assets/images/github_logo.png',
-                      width: 38,
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Image.asset(
-                      'assets/images/LinkedIn_logo.png',
-                      width: 38,
-                    ),
-                  ],
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.blue.withOpacity(0),
-                      backgroundImage: const AssetImage(
-                          'assets/images/developers_avatar.png'),
-                      radius: 24,
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    const Text(
-                      'Arnab Ghosh',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Image.asset(
-                      'assets/images/github_logo.png',
-                      width: 38,
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Image.asset(
-                      'assets/images/LinkedIn_logo.png',
-                      width: 38,
-                    ),
-                  ],
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.blue.withOpacity(0),
-                      backgroundImage: const AssetImage(
-                          'assets/images/developers_avatar.png'),
-                      radius: 24,
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    const Text(
-                      'Joyal Shine',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Image.asset(
-                      'assets/images/github_logo.png',
-                      width: 38,
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Image.asset(
-                      'assets/images/LinkedIn_logo.png',
-                      width: 38,
-                    ),
-                  ],
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.blue.withOpacity(0),
-                      backgroundImage: const AssetImage(
-                          'assets/images/developers_avatar.png'),
-                      radius: 24,
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    const Text(
-                      'Madavan Annamalai',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Image.asset(
-                      'assets/images/github_logo.png',
-                      width: 38,
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Image.asset(
-                      'assets/images/LinkedIn_logo.png',
-                      width: 38,
-                    ),
-                  ],
-                )
-              ],
-            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Row(
+            //       children: [
+            //         CircleAvatar(
+            //           backgroundColor: Colors.blue.withOpacity(0),
+            //           backgroundImage: const AssetImage(
+            //               'assets/images/developers_avatar.png'),
+            //           radius: 24,
+            //         ),
+            //         const SizedBox(
+            //           width: 10,
+            //         ),
+            //         const Text(
+            //           'Sabyajeet Sing Greewal',
+            //           style: TextStyle(fontSize: 16),
+            //         ),
+            //       ],
+            //     ),
+            //     Row(
+            //       children: [
+            //         Image.asset(
+            //           'assets/images/github_logo.png',
+            //           width: 38,
+            //         ),
+            //         const SizedBox(
+            //           width: 5,
+            //         ),
+            //         Image.asset(
+            //           'assets/images/LinkedIn_logo.png',
+            //           width: 38,
+            //         ),
+            //       ],
+            //     )
+            //   ],
+            // ),
+            // const SizedBox(
+            //   height: 5,
+            // ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Row(
+            //       children: [
+            //         CircleAvatar(
+            //           backgroundColor: Colors.blue.withOpacity(0),
+            //           backgroundImage: const AssetImage(
+            //               'assets/images/developers_avatar.png'),
+            //           radius: 24,
+            //         ),
+            //         const SizedBox(
+            //           width: 10,
+            //         ),
+            //         const Text(
+            //           'Arnab Ghosh',
+            //           style: TextStyle(fontSize: 16),
+            //         ),
+            //       ],
+            //     ),
+            //     Row(
+            //       children: [
+            //         Image.asset(
+            //           'assets/images/github_logo.png',
+            //           width: 38,
+            //         ),
+            //         const SizedBox(
+            //           width: 5,
+            //         ),
+            //         Image.asset(
+            //           'assets/images/LinkedIn_logo.png',
+            //           width: 38,
+            //         ),
+            //       ],
+            //     )
+            //   ],
+            // ),
+            // const SizedBox(
+            //   height: 5,
+            // ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Row(
+            //       children: [
+            //         CircleAvatar(
+            //           backgroundColor: Colors.blue.withOpacity(0),
+            //           backgroundImage: const AssetImage(
+            //               'assets/images/developers_avatar.png'),
+            //           radius: 24,
+            //         ),
+            //         const SizedBox(
+            //           width: 10,
+            //         ),
+            //         const Text(
+            //           'Joyal Shine',
+            //           style: TextStyle(fontSize: 16),
+            //         ),
+            //       ],
+            //     ),
+            //     Row(
+            //       children: [
+            //         Image.asset(
+            //           'assets/images/github_logo.png',
+            //           width: 38,
+            //         ),
+            //         const SizedBox(
+            //           width: 5,
+            //         ),
+            //         Image.asset(
+            //           'assets/images/LinkedIn_logo.png',
+            //           width: 38,
+            //         ),
+            //       ],
+            //     )
+            //   ],
+            // ),
+            // const SizedBox(
+            //   height: 5,
+            // ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Row(
+            //       children: [
+            //         CircleAvatar(
+            //           backgroundColor: Colors.blue.withOpacity(0),
+            //           backgroundImage: const AssetImage(
+            //               'assets/images/developers_avatar.png'),
+            //           radius: 24,
+            //         ),
+            //         const SizedBox(
+            //           width: 10,
+            //         ),
+            //         const Text(
+            //           'Madavan Annamalai',
+            //           style: TextStyle(fontSize: 16),
+            //         ),
+            //       ],
+            //     ),
+            //     Row(
+            //       children: [
+            //         Image.asset(
+            //           'assets/images/github_logo.png',
+            //           width: 38,
+            //         ),
+            //         const SizedBox(
+            //           width: 5,
+            //         ),
+            //         Image.asset(
+            //           'assets/images/LinkedIn_logo.png',
+            //           width: 38,
+            //         ),
+            //       ],
+            //     )
+            //   ],
+            // ),
           ],
         ),
       ),

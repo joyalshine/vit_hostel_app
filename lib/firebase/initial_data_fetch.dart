@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
+import 'package:vit_hostel_repo/backend/backend.dart';
 
 final db = FirebaseFirestore.instance;
 
@@ -32,110 +33,83 @@ Future<Map<String, dynamic>> fetchUserComplaints(String email) async {
     var mainPendingId = null;
     var messPendingId = null;
     var discPendingId = null;
-    await db
-        .collection('discipline')
-        .where('studentEmail', isEqualTo: email)
-        .get()
-        .then(
-      (querySnapshot) {
-        for (var docSnapshot in querySnapshot.docs) {
-          var temp = docSnapshot.data();
-          Timestamp time = docSnapshot.get('timestamp');
-          temp['timestamp'] = time.toDate();
-          temp['complaintType'] = 'Discipline';
-          if (temp['status'] == 'pending' || temp['status'] == null) {
-            disciplinePending = true;
-            discPendingId = docSnapshot.id;
-          } else if (temp['status'] == 'deny') {
-            Timestamp resolveTime = docSnapshot.get('denyTime');
-            temp['denyTime'] = resolveTime.toDate();
-          } else {
-            Timestamp resolveTime = docSnapshot.get('resolveTime');
-            temp['resolveTime'] = resolveTime.toDate();
-          }
-          temp['id'] = docSnapshot.id;
-          discipline.add(temp);
-        }
-      },
-    );
-    await db
-        .collection('maintenance')
-        .where('studentEmail', isEqualTo: email)
-        .get()
-        .then(
-      (querySnapshot) {
-        for (var docSnapshot in querySnapshot.docs) {
-          var temp = docSnapshot.data();
-          Timestamp time = docSnapshot.get('timestamp');
-          temp['timestamp'] = time.toDate();
-          temp['complaintType'] = 'Maintenance';
-          if (temp['status'] == 'pending' || temp['status'] == null) {
-            maintenancePending = true;
-            mainPendingId = docSnapshot.id;
-          } else if (temp['status'] == 'deny') {
-            Timestamp resolveTime = docSnapshot.get('denyTime');
-            temp['denyTime'] = resolveTime.toDate();
-          } else {
-            Timestamp resolveTime = docSnapshot.get('resolveTime');
-            temp['resolveTime'] = resolveTime.toDate();
-          }
-          temp['id'] = docSnapshot.id;
-          maintenance.add(temp);
-        }
-      },
-    );
-    await db
-        .collection('cleaning')
-        .where('studentEmail', isEqualTo: email)
-        .get()
-        .then(
-      (querySnapshot) {
-        for (var docSnapshot in querySnapshot.docs) {
-          var temp = docSnapshot.data();
-          Timestamp time = docSnapshot.get('timestamp');
-          temp['timestamp'] = time.toDate();
-          temp['complaintType'] = 'Cleaning';
-          if (temp['status'] == 'pending' || temp['status'] == null) {
-            cleaningPending = true;
-            cleanPendingId = docSnapshot.id;
-          } else if (temp['status'] == 'deny') {
-            Timestamp resolveTime = docSnapshot.get('denyTime');
-            temp['denyTime'] = resolveTime.toDate();
-          } else {
-            Timestamp resolveTime = docSnapshot.get('resolveTime');
-            temp['resolveTime'] = resolveTime.toDate();
-          }
-          temp['id'] = docSnapshot.id;
-          cleaning.add(temp);
-        }
-      },
-    );
-    await db
-        .collection('mess')
-        .where('studentEmail', isEqualTo: email)
-        .get()
-        .then(
-      (querySnapshot) {
-        for (var docSnapshot in querySnapshot.docs) {
-          var temp = docSnapshot.data();
-          Timestamp time = docSnapshot.get('timestamp');
-          temp['timestamp'] = time.toDate();
-          temp['complaintType'] = 'Mess';
-          if (temp['status'] == 'pending' || temp['status'] == null) {
-            messPending = true;
-            messPendingId = docSnapshot.id;
-          } else if (temp['status'] == 'deny') {
-            Timestamp resolveTime = docSnapshot.get('denyTime');
-            temp['denyTime'] = resolveTime.toDate();
-          } else {
-            Timestamp resolveTime = docSnapshot.get('resolveTime');
-            temp['resolveTime'] = resolveTime.toDate();
-          }
-          temp['id'] = docSnapshot.id;
-          mess.add(temp);
-        }
-      },
-    );
+
+    var apiResponse = await apiFetch('fetch-complaints', {'email': email});
+    var fetchedData = apiResponse['data'];
+    for (var complaint in fetchedData['discipline']) {
+      var temp = complaint;
+      var time = complaint['createdAt'];
+      temp['timestamp'] = DateTime.parse(time).toLocal();
+      temp['complaintType'] = 'Discipline';
+      if (temp['status'] == 'pending' || temp['status'] == null) {
+        disciplinePending = true;
+        discPendingId = complaint['_id'];
+      } else if (temp['status'] == 'deny') {
+        var resolveTime = DateTime.parse(complaint['updatedAt']).toLocal();
+        temp['denyTime'] = resolveTime;
+      } else {
+        var resolveTime = DateTime.parse(complaint['updatedAt']).toLocal();
+        temp['resolveTime'] = resolveTime;
+      }
+      temp['id'] = complaint['_id'];
+      discipline.add(temp);
+    }
+    for (var complaint in fetchedData['maintenance']) {
+      var temp = complaint;
+      var time = complaint['createdAt'];
+      temp['timestamp'] = DateTime.parse(time).toLocal();
+      temp['complaintType'] = 'Maintenance';
+      if (temp['status'] == 'pending' || temp['status'] == null) {
+        maintenancePending = true;
+        mainPendingId = complaint['_id'];
+      } else if (temp['status'] == 'deny') {
+        var resolveTime = DateTime.parse(complaint['updatedAt']).toLocal();
+        temp['denyTime'] = resolveTime;
+      } else {
+        var resolveTime = DateTime.parse(complaint['updatedAt']).toLocal();
+        temp['resolveTime'] = resolveTime;
+      }
+      temp['id'] = complaint['_id'];
+      discipline.add(temp);
+    }
+
+    for (var complaint in fetchedData['cleaning']) {
+      var temp = complaint;
+      var time = complaint['createdAt'];
+      temp['timestamp'] = DateTime.parse(time).toLocal();
+      temp['complaintType'] = 'Cleaning';
+      if (temp['status'] == 'pending' || temp['status'] == null) {
+        cleaningPending = true;
+        cleanPendingId = complaint['_id'];
+      } else if (temp['status'] == 'deny') {
+        var resolveTime = DateTime.parse(complaint['updatedAt']).toLocal();
+        temp['denyTime'] = resolveTime;
+      } else {
+        var resolveTime = DateTime.parse(complaint['updatedAt']).toLocal();
+        temp['resolveTime'] = resolveTime;
+      }
+      temp['id'] = complaint['_id'];
+      discipline.add(temp);
+    }
+
+    for (var complaint in fetchedData['mess']) {
+      var temp = complaint;
+      var time = complaint['createdAt'];
+      temp['timestamp'] = DateTime.parse(time).toLocal();
+      temp['complaintType'] = 'Mess';
+      if (temp['status'] == 'pending' || temp['status'] == null) {
+        messPending = true;
+        messPendingId = complaint['_id'];
+      } else if (temp['status'] == 'deny') {
+        var resolveTime = DateTime.parse(complaint['updatedAt']).toLocal();
+        temp['denyTime'] = resolveTime;
+      } else {
+        var resolveTime = DateTime.parse(complaint['updatedAt']).toLocal();
+        temp['resolveTime'] = resolveTime;
+      }
+      temp['id'] = complaint['_id'];
+      discipline.add(temp);
+    }
     return {
       'status': true,
       'discipline': discipline,
@@ -175,12 +149,8 @@ Future<Map<String, dynamic>> fetchCurrentMenu(messType) async {
   final date = DateTime.now();
   String key = months[date.month - 1] + date.year.toString() + '-' + messType;
   try {
-    DocumentSnapshot doc = await db.collection('messMenu').doc(key).get();
-    if (doc.exists) {
-      return {'status': true, 'data': doc.data(), 'key': key};
-    } else {
-      return {'status': true, 'type': null};
-    }
+    var apiResponse = await apiFetch('fetch-menu', {'key': key});
+    return apiResponse;
   } catch (err) {
     return {'status': false, 'type': 'error'};
   }
@@ -190,44 +160,48 @@ Future<void> updateMaintenancePending() async {
   Box complaintBox = Hive.box('complaints');
   final mainPendingId = complaintBox.get('mainPendingId');
   try {
-    DocumentSnapshot doc =
-        await db.collection('maintenance').doc(mainPendingId).get();
-    if (doc.get('status') == 'deny' || doc.get('status') == 'resolve') {
-      List<dynamic> hiveOldData = complaintBox.get('maintenanceHistory') ?? [];
-      List<dynamic> hiveNewData = [];
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      var temp = {};
-      if (doc.get('status') == 'deny') {
-        Timestamp solvedTime = doc.get('denyTime');
-        Timestamp time = doc.get('timestamp');
-        temp = {
-          ...data,
-          'denyTime': solvedTime.toDate(),
-          'timestamp' : time.toDate(),
-          'complaintType': 'Maintenance',
-          'id': doc.id
-        };
-      } else {
-        Timestamp solvedTime = doc.get('resolveTime');
-        Timestamp time = doc.get('timestamp');
-        temp = {
-          ...data,
-          'resolveTime': solvedTime.toDate(),
-          'timestamp' : time.toDate(),
-          'complaintType': 'Maintenance',
-          'id': doc.id
-        };
-      }
-      for (int i = 0; i < hiveOldData.length; i++) {
-        if (hiveOldData[i]['id'] == mainPendingId) {
-          hiveNewData.add(temp);
+    var apiResponse = await apiFetch('fetch-complaint-update',
+        {'id': mainPendingId, 'collection': 'maintenance'});
+    if (apiResponse['status']) {
+      var doc = apiResponse['data'];
+      if (doc['status'] == 'deny' || doc['status'] == 'resolve') {
+        List<dynamic> hiveOldData =
+            complaintBox.get('maintenanceHistory') ?? [];
+        List<dynamic> hiveNewData = [];
+        Map<String, dynamic> data = doc as Map<String, dynamic>;
+        var temp = {};
+        if (doc['status'] == 'deny') {
+          var solvedTime = DateTime.parse(doc['updatedAt']).toLocal();
+          var time = DateTime.parse(doc['createdAt']).toLocal();
+          temp = {
+            ...data,
+            'denyTime': solvedTime,
+            'timestamp': time,
+            'complaintType': 'Maintenance',
+            'id': doc['_id']
+          };
         } else {
-          hiveNewData.add(hiveOldData[i]);
+          var solvedTime = DateTime.parse(doc['updatedAt']).toLocal();
+          var time = DateTime.parse(doc['createdAt']).toLocal();
+          temp = {
+            ...data,
+            'resolveTime': solvedTime,
+            'timestamp': time,
+            'complaintType': 'Maintenance',
+            'id': doc['_id']
+          };
         }
+        for (int i = 0; i < hiveOldData.length; i++) {
+          if (hiveOldData[i]['id'] == mainPendingId) {
+            hiveNewData.add(temp);
+          } else {
+            hiveNewData.add(hiveOldData[i]);
+          }
+        }
+        complaintBox.put('maintenanceHistory', hiveNewData);
+        complaintBox.put('maintenancePending', false);
+        complaintBox.put('mainPendingId', null);
       }
-      complaintBox.put('maintenanceHistory', hiveNewData);
-      complaintBox.put('maintenancePending', false);
-      complaintBox.put('mainPendingId', null);
     }
 
     // return true;
@@ -240,43 +214,47 @@ Future<void> updateMessPending() async {
   Box complaintBox = Hive.box('complaints');
   final mainPendingId = complaintBox.get('messPendingId');
   try {
-    DocumentSnapshot doc = await db.collection('mess').doc(mainPendingId).get();
-    if (doc.get('status') == 'deny' || doc.get('status') == 'resolve') {
-      List<dynamic> hiveOldData = complaintBox.get('messHistory') ?? [];
-      List<dynamic> hiveNewData = [];
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      var temp = {};
-      if (doc.get('status') == 'deny') {
-        Timestamp solvedTime = doc.get('denyTime');
-        Timestamp time = doc.get('timestamp');
-        temp = {
-          ...data,
-          'denyTime': solvedTime.toDate(),
-          'timestamp' : time.toDate(),
-          'complaintType': 'Mess',
-          'id': doc.id
-        };
-      } else {
-        Timestamp solvedTime = doc.get('resolveTime');
-        Timestamp time = doc.get('timestamp');
-        temp = {
-          ...data,
-          'resolveTime': solvedTime.toDate(),
-          'timestamp' : time.toDate(),
-          'complaintType': 'Mess',
-          'id': doc.id
-        };
-      }
-      for (int i = 0; i < hiveOldData.length; i++) {
-        if (hiveOldData[i]['id'] == mainPendingId) {
-          hiveNewData.add(temp);
+    var apiResponse = await apiFetch(
+        'fetch-complaint-update', {'id': mainPendingId, 'collection': 'mess'});
+    if (apiResponse['status']) {
+      var doc = apiResponse['data'];
+      if (doc['status'] == 'deny' || doc['status'] == 'resolve') {
+        List<dynamic> hiveOldData = complaintBox.get('messHistory') ?? [];
+        List<dynamic> hiveNewData = [];
+        Map<String, dynamic> data = doc as Map<String, dynamic>;
+        var temp = {};
+        if (doc['status'] == 'deny') {
+          var solvedTime = DateTime.parse(doc['updatedAt']).toLocal();
+          var time = DateTime.parse(doc['createdAt']).toLocal();
+          temp = {
+            ...data,
+            'denyTime': solvedTime,
+            'timestamp': time,
+            'complaintType': 'Maintenance',
+            'id': doc['_id']
+          };
         } else {
-          hiveNewData.add(hiveOldData[i]);
+          var solvedTime = DateTime.parse(doc['updatedAt']).toLocal();
+          var time = DateTime.parse(doc['createdAt']).toLocal();
+          temp = {
+            ...data,
+            'resolveTime': solvedTime,
+            'timestamp': time,
+            'complaintType': 'Mess',
+            'id': doc['_id']
+          };
         }
+        for (int i = 0; i < hiveOldData.length; i++) {
+          if (hiveOldData[i]['id'] == mainPendingId) {
+            hiveNewData.add(temp);
+          } else {
+            hiveNewData.add(hiveOldData[i]);
+          }
+        }
+        complaintBox.put('messHistory', hiveNewData);
+        complaintBox.put('messPending', false);
+        complaintBox.put('messPendingId', null);
       }
-      complaintBox.put('messHistory', hiveNewData);
-      complaintBox.put('messPending', false);
-      complaintBox.put('messPendingId', null);
     }
     // return true;
   } catch (err) {
@@ -288,44 +266,47 @@ Future<void> updateDisciplinePending() async {
   Box complaintBox = Hive.box('complaints');
   final mainPendingId = complaintBox.get('discPendingId');
   try {
-    DocumentSnapshot doc =
-        await db.collection('discipline').doc(mainPendingId).get();
-    if (doc.get('status') == 'deny' || doc.get('status') == 'resolve') {
-      List<dynamic> hiveOldData = complaintBox.get('disciplineHistory') ?? [];
-      List<dynamic> hiveNewData = [];
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      var temp = {};
-      if (doc.get('status') == 'deny') {
-        Timestamp solvedTime = doc.get('denyTime');
-        Timestamp time = doc.get('timestamp');
-        temp = {
-          ...data,
-          'denyTime': solvedTime.toDate(),
-          'timestamp' : time.toDate(),
-          'complaintType': 'Discipline',
-          'id': doc.id
-        };
-      } else {
-        Timestamp solvedTime = doc.get('resolveTime');
-        Timestamp time = doc.get('timestamp');
-        temp = {
-          ...data,
-          'resolveTime': solvedTime.toDate(),
-          'timestamp' : time.toDate(),
-          'complaintType': 'Discipline',
-          'id': doc.id
-        };
-      }
-      for (int i = 0; i < hiveOldData.length; i++) {
-        if (hiveOldData[i]['id'] == mainPendingId) {
-          hiveNewData.add(temp);
+    var apiResponse = await apiFetch('fetch-complaint-update',
+        {'id': mainPendingId, 'collection': 'discipline'});
+    if (apiResponse['status']) {
+      var doc = apiResponse['data'];
+      if (doc['status'] == 'deny' || doc['status'] == 'resolve') {
+        List<dynamic> hiveOldData = complaintBox.get('disciplineHistory') ?? [];
+        List<dynamic> hiveNewData = [];
+        Map<String, dynamic> data = doc as Map<String, dynamic>;
+        var temp = {};
+        if (doc['status'] == 'deny') {
+          var solvedTime = DateTime.parse(doc['updatedAt']).toLocal();
+          var time = DateTime.parse(doc['createdAt']).toLocal();
+          temp = {
+            ...data,
+            'denyTime': solvedTime,
+            'timestamp': time,
+            'complaintType': 'Discipline',
+            'id': doc['_id']
+          };
         } else {
-          hiveNewData.add(hiveOldData[i]);
+          var solvedTime = DateTime.parse(doc['updatedAt']).toLocal();
+          var time = DateTime.parse(doc['createdAt']).toLocal();
+          temp = {
+            ...data,
+            'resolveTime': solvedTime,
+            'timestamp': time,
+            'complaintType': 'Maintenance',
+            'id': doc['_id']
+          };
         }
+        for (int i = 0; i < hiveOldData.length; i++) {
+          if (hiveOldData[i]['id'] == mainPendingId) {
+            hiveNewData.add(temp);
+          } else {
+            hiveNewData.add(hiveOldData[i]);
+          }
+        }
+        complaintBox.put('disciplineHistory', hiveNewData);
+        complaintBox.put('disciplinePending', false);
+        complaintBox.put('discPendingId', null);
       }
-      complaintBox.put('disciplineHistory', hiveNewData);
-      complaintBox.put('disciplinePending', false);
-      complaintBox.put('discPendingId', null);
     }
     // return true;
   } catch (err) {
@@ -337,44 +318,47 @@ Future<void> updateCleaningPending() async {
   Box complaintBox = Hive.box('complaints');
   final mainPendingId = complaintBox.get('cleanPendingId');
   try {
-    DocumentSnapshot doc =
-        await db.collection('cleaning').doc(mainPendingId).get();
-    if (doc.get('status') == 'deny' || doc.get('status') == 'resolve') {
-      List<dynamic> hiveOldData = complaintBox.get('cleaningHistory') ?? [];
-      List<dynamic> hiveNewData = [];
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      var temp = {};
-      if (doc.get('status') == 'deny') {
-        Timestamp solvedTime = doc.get('denyTime');
-        Timestamp time = doc.get('timestamp');
-        temp = {
-          ...data,
-          'denyTime': solvedTime.toDate(),
-          'timestamp' : time.toDate(),
-          'complaintType': 'Cleaning',
-          'id': doc.id
-        };
-      } else {
-        Timestamp solvedTime = doc.get('resolveTime');
-        Timestamp time = doc.get('timestamp');
-        temp = {
-          ...data,
-          'resolveTime': solvedTime.toDate(),
-          'timestamp' : time.toDate(),
-          'complaintType': 'Cleaning',
-          'id': doc.id
-        };
-      }
-      for (int i = 0; i < hiveOldData.length; i++) {
-        if (hiveOldData[i]['id'] == mainPendingId) {
-          hiveNewData.add(temp);
+    var apiResponse = await apiFetch('fetch-complaint-update',
+        {'id': mainPendingId, 'collection': 'cleaning'});
+    if (apiResponse['status']) {
+      var doc = apiResponse['data'];
+      if (doc['status'] == 'deny' || doc['status'] == 'resolve') {
+        List<dynamic> hiveOldData = complaintBox.get('cleaningHistory') ?? [];
+        List<dynamic> hiveNewData = [];
+        Map<String, dynamic> data = doc as Map<String, dynamic>;
+        var temp = {};
+        if (doc['status'] == 'deny') {
+          var solvedTime = DateTime.parse(doc['updatedAt']).toLocal();
+          var time = DateTime.parse(doc['createdAt']).toLocal();
+          temp = {
+            ...data,
+            'denyTime': solvedTime,
+            'timestamp': time,
+            'complaintType': 'Cleaning',
+            'id': doc['_id']
+          };
         } else {
-          hiveNewData.add(hiveOldData[i]);
+          var solvedTime = DateTime.parse(doc['updatedAt']).toLocal();
+          var time = DateTime.parse(doc['createdAt']).toLocal();
+          temp = {
+            ...data,
+            'resolveTime': solvedTime,
+            'timestamp': time,
+            'complaintType': 'Maintenance',
+            'id': doc['_id']
+          };
         }
+        for (int i = 0; i < hiveOldData.length; i++) {
+          if (hiveOldData[i]['id'] == mainPendingId) {
+            hiveNewData.add(temp);
+          } else {
+            hiveNewData.add(hiveOldData[i]);
+          }
+        }
+        complaintBox.put('cleaningHistory', hiveNewData);
+        complaintBox.put('cleaningPending', false);
+        complaintBox.put('cleanPendingId', null);
       }
-      complaintBox.put('cleaningHistory', hiveNewData);
-      complaintBox.put('cleaningPending', false);
-      complaintBox.put('cleanPendingId', null);
     }
     // return true;
   } catch (err) {

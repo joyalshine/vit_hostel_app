@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:quickalert/quickalert.dart';
+import 'package:vit_hostel_repo/firebase/data_assets.dart';
 import 'package:vit_hostel_repo/pages/profile_screen.dart';
 
 import '../firebase/complaint_add_functions.dart';
@@ -15,18 +16,22 @@ class MaintenanceComplaint extends StatefulWidget {
 
 class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
   TextEditingController blockTextController =
-      TextEditingController(text: 'Q Block');
+      TextEditingController(text: '');
   TextEditingController roomTextController =
-      TextEditingController(text: '1249');
+      TextEditingController(text: '');
   TextEditingController messageController = TextEditingController();
+  late final String block;
 
   Box userBox = Hive.box('userDetails');
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    blockTextController.text = userBox.get('block');
+    blockTextController.text = BLOCKS[userBox.get('block')] ?? '';
     roomTextController.text = userBox.get('room').toString();
+    setState(() {
+      block = userBox.get('block');
+    });
   }
 
   List<bool> mainteneanceOf = [false, false, false, false, false, false];
@@ -90,36 +95,44 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
       });
     }
     if (!errors) {
-      String email = userBox.get('email');
-      String name = userBox.get('name');
-      String regno = userBox.get('regno');
-      Map<String, dynamic> dataToUpload = {
-        'block': blockTextController.text,
-        'room': roomTextController.text,
-        'name': name,
-        'regno': regno,
-        'status': 'pending',
-        'studentEmail': email,
-        'timestamp': FieldValue.serverTimestamp(),
-        'category': mainteneanceOfList,
-        'availableTime': availableTime,
-        'complaint': message
-      };
-      Map<String, dynamic> response =
-          await addMaintenanceComplaint(dataToUpload);
-      setState(() {
-        _isLoading = false;
-      });
-      if (response['status']) {
-        for (int i = 0; i <= 5; i++) {
-          setState(() => mainteneanceOf[i] = false);
-        }
+      Box complaintBox = Hive.box('complaints');
+      final isPending = complaintBox.get('maintenancePending');
+      if (isPending) {
         setState(() {
-          remainingCharacters = 100;
+          _isLoading = false;
         });
-        messageController.clear();
+        return {'status': false, 'type': 'pendingexist'};
+      } else {
+        String email = userBox.get('email');
+        String name = userBox.get('name');
+        String regno = userBox.get('regno');
+        Map<String, dynamic> dataToUpload = {
+          'block': block,
+          'room': roomTextController.text,
+          'name': name,
+          'regno': regno,
+          'status': 'pending',
+          'studentEmail': email,
+          'category': mainteneanceOfList,
+          'availableTime': availableTime,
+          'complainDesc': message
+        };
+        Map<String, dynamic> response =
+            await addMaintenanceComplaint(dataToUpload);
+        setState(() {
+          _isLoading = false;
+        });
+        if (response['status']) {
+          for (int i = 0; i <= 5; i++) {
+            setState(() => mainteneanceOf[i] = false);
+          }
+          setState(() {
+            remainingCharacters = 100;
+          });
+          messageController.clear();
+        }
+        return response;
       }
-      return response;
     } else {
       setState(() {
         _isLoading = false;
@@ -560,7 +573,7 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
                                       BorderRadius.all(Radius.circular(7)))),
                           style: const TextStyle(color: Colors.black),
                           onChanged: (String? value) {
-                            if(availableTimeError){
+                            if (availableTimeError) {
                               setState(() {
                                 availableTimeError = false;
                               });
@@ -697,12 +710,12 @@ class _MaintenanceComplaintState extends State<MaintenanceComplaint> {
                                   context: context,
                                   builder: (_) => NetworkErrorDialog(),
                                 );
-                              }else if (response['type'] == 'pendingexist') {
+                              } else if (response['type'] == 'pendingexist') {
                                 QuickAlert.show(
-                                context: context,
-                                type: QuickAlertType.info,
-                                text: 'A Request already exists!',
-                              );
+                                  context: context,
+                                  type: QuickAlertType.info,
+                                  text: 'A Request already exists!',
+                                );
                               } else {}
                             }
                           },

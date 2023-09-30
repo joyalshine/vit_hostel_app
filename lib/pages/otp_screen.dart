@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vit_hostel_repo/backend/backend.dart';
+import 'package:vit_hostel_repo/firebase/user_validation.dart';
 
 class OtpScreen extends StatefulWidget {
   const OtpScreen(
@@ -65,9 +66,7 @@ class _OtpScreenState extends State<OtpScreen> {
     setState(() {
       _isLoading = true;
     });
-    print(widget.email);
-    print(widget.userDetails['details']['name']);
-    final response = await sendOTP(widget.email, widget.userDetails['details']['name']);
+    final response = await reSendOTP(widget.email, widget.userDetails['details']['name']);
     print(response);
     if (response['status']) {
       const snackBar = SnackBar(
