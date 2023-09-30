@@ -41,6 +41,8 @@ class _DataFetchScreenState extends State<DataFetchScreen> {
 
   void fetchData() async {
     try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('JWT', widget.userDetails['jwt']);
       var details = widget.userDetails['details'];
       final Box boxUserDetails = Hive.box('userDetails');
       boxUserDetails.put('name', details['name']);
@@ -82,7 +84,8 @@ class _DataFetchScreenState extends State<DataFetchScreen> {
       }
 
       final Box boxMenu = Hive.box('messMenu');
-      final Map<String, dynamic> menuFetchResponse = await fetchCurrentMenu(details['messType']);
+      final Map<String, dynamic> menuFetchResponse =
+          await fetchCurrentMenu(details['messType']);
       if (menuFetchResponse['status']) {
         if (menuFetchResponse['data'] != null) {
           final Map<String, dynamic> menuData = menuFetchResponse['data'];
@@ -93,9 +96,9 @@ class _DataFetchScreenState extends State<DataFetchScreen> {
         errors = true;
       }
       if (!errors) {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setBool('loggedIn', true);
-        await FirebaseNotifications().initNotifications(widget.userDetails['email']);
+        await FirebaseNotifications()
+            .initNotifications(widget.userDetails['email']);
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(

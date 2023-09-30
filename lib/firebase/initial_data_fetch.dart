@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
 import 'package:vit_hostel_repo/backend/backend.dart';
-import 'package:intl/intl.dart';
 
 final db = FirebaseFirestore.instance;
 
@@ -61,8 +60,8 @@ Future<Map<String, dynamic>> fetchUserComplaints(String email) async {
       temp['timestamp'] = DateTime.parse(time).toLocal();
       temp['complaintType'] = 'Maintenance';
       if (temp['status'] == 'pending' || temp['status'] == null) {
-        disciplinePending = true;
-        discPendingId = complaint['_id'];
+        maintenancePending = true;
+        mainPendingId = complaint['_id'];
       } else if (temp['status'] == 'deny') {
         var resolveTime = DateTime.parse(complaint['updatedAt']).toLocal();
         temp['denyTime'] = resolveTime;
@@ -80,8 +79,8 @@ Future<Map<String, dynamic>> fetchUserComplaints(String email) async {
       temp['timestamp'] = DateTime.parse(time).toLocal();
       temp['complaintType'] = 'Cleaning';
       if (temp['status'] == 'pending' || temp['status'] == null) {
-        disciplinePending = true;
-        discPendingId = complaint['_id'];
+        cleaningPending = true;
+        cleanPendingId = complaint['_id'];
       } else if (temp['status'] == 'deny') {
         var resolveTime = DateTime.parse(complaint['updatedAt']).toLocal();
         temp['denyTime'] = resolveTime;
@@ -99,8 +98,8 @@ Future<Map<String, dynamic>> fetchUserComplaints(String email) async {
       temp['timestamp'] = DateTime.parse(time).toLocal();
       temp['complaintType'] = 'Mess';
       if (temp['status'] == 'pending' || temp['status'] == null) {
-        disciplinePending = true;
-        discPendingId = complaint['_id'];
+        messPending = true;
+        messPendingId = complaint['_id'];
       } else if (temp['status'] == 'deny') {
         var resolveTime = DateTime.parse(complaint['updatedAt']).toLocal();
         temp['denyTime'] = resolveTime;

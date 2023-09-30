@@ -11,6 +11,7 @@ Future<Map<String, dynamic>> loginUser(String email) async {
         'isValid': true,
         'email': user['data']['email'],
         'details': user['data'],
+        'jwt':user['jwt'],
         'OTP': user['OTP']
       };
     } else {

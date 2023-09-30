@@ -41,7 +41,7 @@ class _HistoryListState extends State<HistoryList> {
         return false;
       }).toList();
       newData.sort((a, b) => b["timestamp"].compareTo(a["timestamp"]));
-      newData = new List.from(newData.reversed);
+      // newData = new List.from(newData.reversed);
       // newData.sort((a, b) => (b["updatedTime"] ?? b["denyTime"])
       //     .compareTo(a["resolveTime"] ?? a["denyTime"]));
     } else {

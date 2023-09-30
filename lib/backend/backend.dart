@@ -1,41 +1,43 @@
 import 'dart:convert';
+import 'package:restart_app/restart_app.dart';
+import 'package:hive/hive.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
-// Future<Map<String,dynamic>> sendOTP(String email,String name) async{
-//   try{
-//     final url = Uri.parse('https://vit-hostel-app-backend.onrender.com/verify/$email/$name');
-//     http.Response response = await http.post(url,headers: {
-//       'Content-Type' : 'application/json'
-//     },);
-//     var data = jsonDecode(response.body);
-//     return {
-//       'status': true,
-//       'otp':data['otp']
-//     };
-//   }
-//   catch(err){
-//     return {
-//       'status':false,
-//       'msg' : err
-//     };
-//   }
-// }
-
-Future<dynamic> apiFetch(String route, Map<String,dynamic> body) async{
-  try{
+Future<dynamic> apiFetch(String route, Map<String, dynamic> body) async {
+  try {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? JWT = prefs.getString('JWT') ?? 'null';
+    Map<String,String> headers;
+    if(route == 'login' || route == 'resend-otp'){
+      headers = {
+          'Content-Type': 'application/json'
+        };
+    }
+    else{
+      headers = {
+          'Content-Type': 'application/json',
+          'Authorization' : 'Bearer $JWT'
+        };
+    }
     final url = Uri.parse('http://10.0.2.2:3000/app/$route');
-    http.Response response = await http.post(url,headers: {
-      'Content-Type' : 'application/json'
-    },body: jsonEncode({"data" : body}));
+    http.Response response = await http.post(url,
+        headers: headers,
+        body: jsonEncode({"data": body}));
     var data = jsonDecode(response.body);
-    return data;
+    final statusCode = response.statusCode;
+    if (statusCode == 403) {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('loggedIn', false);
+      await Hive.box('userDetails').clear();
+      await Hive.box('messMenu').clear();
+      await Hive.box('complaints').clear();
+      Restart.restartApp();
+    } else {
+      return data;
+    }
+  } catch (err) {
+    return {'status': false, 'msg': err};
   }
-  catch(err){
-    return {
-      'status':false,
-      'msg' : err
-    };
-  }
-  
 }

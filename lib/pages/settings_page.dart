@@ -72,6 +72,7 @@ class _SettingsState extends State<Settings> {
   void logout() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('loggedIn', false);
+    await prefs.setString('JWT', 'null');
     await Hive.box('userDetails').clear();
     await Hive.box('messMenu').clear();
     await Hive.box('complaints').clear();

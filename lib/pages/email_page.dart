@@ -112,9 +112,9 @@ class _EmailScreenState extends State<EmailScreen> {
           );
         } else {
           Map<String, dynamic> userDetails = await loginUser(email);
+          print(userDetails);
+          print('{}{{{{{{{{}}}}}}}}');
           if (userDetails['isValid']) {
-            print('=================');
-            print(userDetails);
             widget.nextScreen(
                 userDetails['OTP'], userDetails['email'], userDetails);
           } else {
