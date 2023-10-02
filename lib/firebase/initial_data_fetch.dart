@@ -152,6 +152,7 @@ Future<Map<String, dynamic>> fetchCurrentMenu(messType) async {
     var apiResponse = await apiFetch('fetch-menu', {'key': key});
     return apiResponse;
   } catch (err) {
+    print(err);
     return {'status': false, 'type': 'error'};
   }
 }

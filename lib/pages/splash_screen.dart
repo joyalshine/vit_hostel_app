@@ -72,10 +72,9 @@ class _SplashScreenState extends State<SplashScreen> {
         boxUserDetails.put('mess', details['mess']);
         boxUserDetails.put('messType', details['messType']);
       } else {
-        if(newUserDetailsResponse['type'] == 'invalidUser'){
+        if (newUserDetailsResponse['type'] == 'invalidUser') {
           logout();
-        }
-        else{}
+        } else {}
       }
       // if(currHiveMonth == null || currHiveMonth == '' || currHiveMonth != key){
       //   final Map<String,dynamic> menuFetchResponse = await fetchCurrentMenu(messType);
@@ -88,9 +87,11 @@ class _SplashScreenState extends State<SplashScreen> {
       final Map<String, dynamic> menuFetchResponse =
           await fetchCurrentMenu(messType);
       if (menuFetchResponse['status']) {
-        final Map<String, dynamic> menuData = menuFetchResponse['data'];
-        await menuBox.putAll(menuData);
-        menuBox.put('month', menuFetchResponse['key']);
+        if (menuFetchResponse['data'] != null) {
+          final Map<String, dynamic> menuData = menuFetchResponse['data'];
+          await menuBox.putAll(menuData);
+          menuBox.put('month', menuFetchResponse['key']);
+        }
       }
 
       if (maintenancePending) {
