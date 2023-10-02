@@ -82,10 +82,11 @@ class _DataFetchScreenState extends State<DataFetchScreen> {
         print('iniside ---------------------');
         errors = true;
       }
-
+      print('--------------------');
       final Box boxMenu = Hive.box('messMenu');
       final Map<String, dynamic> menuFetchResponse =
           await fetchCurrentMenu(details['messType']);
+      print(menuFetchResponse);
       if (menuFetchResponse['status']) {
         if (menuFetchResponse['data'] != null) {
           final Map<String, dynamic> menuData = menuFetchResponse['data'];
@@ -93,8 +94,11 @@ class _DataFetchScreenState extends State<DataFetchScreen> {
           boxMenu.put('month', menuFetchResponse['key']);
         }
       } else {
+        print('maess error');
         errors = true;
       }
+      print('--------------------123');
+
       if (!errors) {
         await prefs.setBool('loggedIn', true);
         await FirebaseNotifications()
@@ -115,6 +119,7 @@ class _DataFetchScreenState extends State<DataFetchScreen> {
                     )));
       }
     } catch (err) {
+      print(err);
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
